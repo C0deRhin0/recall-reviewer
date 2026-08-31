@@ -1,0 +1,176 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "number",
+      "const": 1
+    },
+    "exam_code": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]*$"
+    },
+    "edition": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]*$"
+    },
+    "release_label": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "categories": {
+      "minItems": 1,
+      "maxItems": 40,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]*$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "weight": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          }
+        },
+        "required": ["slug", "name", "weight"],
+        "additionalProperties": false
+      }
+    },
+    "questions": {
+      "minItems": 1,
+      "maxItems": 1000,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "external_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]*$"
+          },
+          "category_slug": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]*$"
+          },
+          "objective_code": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "prompt": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 6000
+          },
+          "choices": {
+            "minItems": 4,
+            "maxItems": 4,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100,
+                  "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]*$"
+                },
+                "text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 2000
+                }
+              },
+              "required": ["id", "text"],
+              "additionalProperties": false
+            }
+          },
+          "correct_choice_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]*$"
+          },
+          "explanation_technical": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 6000
+          },
+          "explanation_eli5": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 3000
+          },
+          "difficulty": {
+            "default": "intermediate",
+            "type": "string",
+            "enum": ["basic", "intermediate", "advanced"]
+          },
+          "tags": {
+            "default": [],
+            "maxItems": 20,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 60
+            }
+          },
+          "source_reference": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "change_note": {
+            "default": "Imported revision",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "external_id",
+          "category_slug",
+          "objective_code",
+          "prompt",
+          "choices",
+          "correct_choice_id",
+          "explanation_technical",
+          "explanation_eli5",
+          "difficulty",
+          "tags",
+          "source_reference",
+          "change_note"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "exam_code",
+    "edition",
+    "release_label",
+    "categories",
+    "questions"
+  ],
+  "additionalProperties": false
+}
