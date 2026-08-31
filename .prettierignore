@@ -1,0 +1,11 @@
+node_modules
+.next
+private
+backups
+exports
+imports
+test-results
+playwright-report
+coverage
+package-lock.json
+.env*
