@@ -1,0 +1,965 @@
+{
+  "schema_version": 1,
+  "exam_code": "SECURITY-PLUS-SAMPLE",
+  "edition": "v7",
+  "release_label": "v7-sample.1",
+  "categories": [
+    {
+      "slug": "general-concepts",
+      "name": "General security concepts",
+      "weight": 12
+    },
+    {
+      "slug": "threats",
+      "name": "Threats & mitigations",
+      "weight": 22
+    },
+    {
+      "slug": "architecture",
+      "name": "Security architecture",
+      "weight": 18
+    },
+    {
+      "slug": "operations",
+      "name": "Security operations",
+      "weight": 28
+    },
+    {
+      "slug": "governance",
+      "name": "Governance & oversight",
+      "weight": 20
+    }
+  ],
+  "questions": [
+    {
+      "external_id": "sample-0001",
+      "category_slug": "general-concepts",
+      "objective_code": "SAMPLE-1",
+      "prompt": "A help-desk employee needs to reset passwords but should not manage network devices. Which principle should guide their permissions?",
+      "choices": [
+        {
+          "id": "choice-1",
+          "text": "Least privilege"
+        },
+        {
+          "id": "choice-2",
+          "text": "High availability"
+        },
+        {
+          "id": "choice-3",
+          "text": "Obfuscation"
+        },
+        {
+          "id": "choice-4",
+          "text": "Redundancy"
+        }
+      ],
+      "correct_choice_id": "choice-1",
+      "explanation_technical": "Grant only the permissions necessary for the assigned role. Reducing unnecessary access also limits the impact of an account compromise.",
+      "explanation_eli5": "Give someone keys only to the rooms they need.",
+      "difficulty": "basic",
+      "tags": ["synthetic-sample"],
+      "source_reference": "Original illustrative question. Confirm mapping against your booked exam objectives.",
+      "change_note": "Initial synthetic sample"
+    },
+    {
+      "external_id": "sample-0002",
+      "category_slug": "general-concepts",
+      "objective_code": "SAMPLE-1",
+      "prompt": "A company wants to detect whether a downloaded file was modified. Which mechanism best supports this check?",
+      "choices": [
+        {
+          "id": "choice-1",
+          "text": "A cryptographic hash compared with a trusted value"
+        },
+        {
+          "id": "choice-2",
+          "text": "A longer filename"
+        },
+        {
+          "id": "choice-3",
+          "text": "A compressed archive alone"
+        },
+        {
+          "id": "choice-4",
+          "text": "A public IP address"
+        }
+      ],
+      "correct_choice_id": "choice-1",
+      "explanation_technical": "A cryptographic hash provides a fingerprint of the file. Comparing it with a trusted expected hash can detect a change; an untrusted hash alongside a malicious file does not establish authenticity.",
+      "explanation_eli5": "Compare the package with a trusted fingerprint to see whether anything changed.",
+      "difficulty": "basic",
+      "tags": ["synthetic-sample"],
+      "source_reference": "Original illustrative question. Confirm mapping against your booked exam objectives.",
+      "change_note": "Initial synthetic sample"
+    },
+    {
+      "external_id": "sample-0003",
+      "category_slug": "general-concepts",
+      "objective_code": "SAMPLE-1",
+      "prompt": "An employee uses a password and a physical security key to sign in. What does this demonstrate?",
+      "choices": [
+        {
+          "id": "choice-1",
+          "text": "Multifactor authentication"
+        },
+        {
+          "id": "choice-2",
+          "text": "Two passwords"
+        },
+        {
+          "id": "choice-3",
+          "text": "Network segmentation"
+        },
+        {
+          "id": "choice-4",
+          "text": "Single-factor authentication"
+        }
+      ],
+      "correct_choice_id": "choice-1",
+      "explanation_technical": "A password is something the user knows, while a physical security key is something they possess. These are distinct authentication factors.",
+      "explanation_eli5": "You need both a secret you know and a key you carry.",
+      "difficulty": "basic",
+      "tags": ["synthetic-sample"],
+      "source_reference": "Original illustrative question. Confirm mapping against your booked exam objectives.",
+      "change_note": "Initial synthetic sample"
+    },
+    {
+      "external_id": "sample-0004",
+      "category_slug": "general-concepts",
+      "objective_code": "SAMPLE-1",
+      "prompt": "Which security objective is primarily affected when a service becomes unreachable during an outage?",
+      "choices": [
+        {
+          "id": "choice-1",
+          "text": "Availability"
+        },
+        {
+          "id": "choice-2",
+          "text": "Confidentiality"
+        },
+        {
+          "id": "choice-3",
+          "text": "Non-repudiation"
+        },
+        {
+          "id": "choice-4",
+          "text": "Data classification"
+        }
+      ],
+      "correct_choice_id": "choice-1",
+      "explanation_technical": "Availability concerns timely, reliable access to systems and data. An outage prevents legitimate users from accessing the service.",
+      "explanation_eli5": "A locked-up shop cannot serve customers, even when everything inside is safe.",
+      "difficulty": "basic",
+      "tags": ["synthetic-sample"],
+      "source_reference": "Original illustrative question. Confirm mapping against your booked exam objectives.",
+      "change_note": "Initial synthetic sample"
+    },
+    {
+      "external_id": "sample-0005",
+      "category_slug": "general-concepts",
+      "objective_code": "SAMPLE-1",
+      "prompt": "Which control is primarily detective?",
+      "choices": [
+        {
+          "id": "choice-1",
+          "text": "Reviewing authentication logs for unusual sign-ins"
+        },
+        {
+          "id": "choice-2",
+          "text": "Blocking an unauthorized network port"
+        },
+        {
+          "id": "choice-3",
+          "text": "Encrypting a database backup"
+        },
+        {
+          "id": "choice-4",
+          "text": "Requiring a badge to enter a room"
+        }
+      ],
+      "correct_choice_id": "choice-1",
+      "explanation_technical": "Reviewing logs identifies activity that has occurred. Preventive controls instead attempt to stop unwanted activity before it succeeds.",
+      "explanation_eli5": "A camera recording helps you notice what happened; a locked door helps stop it.",
+      "difficulty": "basic",
+      "tags": ["synthetic-sample"],
+      "source_reference": "Original illustrative question. Confirm mapping against your booked exam objectives.",
+      "change_note": "Initial synthetic sample"
+    },
+    {
+      "external_id": "sample-0006",
+      "category_slug": "general-concepts",
+      "objective_code": "SAMPLE-1",
+      "prompt": "Why should password storage use a unique salt with a password hashing function?",
+      "choices": [
+        {
+          "id": "choice-1",
+          "text": "To make identical passwords produce different stored results"
+        },
+        {
+          "id": "choice-2",
+          "text": "To allow administrators to decrypt passwords"
+        },
+        {
+          "id": "choice-3",
+          "text": "To eliminate the need for a password hashing function"
+        },
+        {
+          "id": "choice-4",
+          "text": "To make passwords public"
+        }
+      ],
+      "correct_choice_id": "choice-1",
+      "explanation_technical": "A unique salt prevents equal passwords from sharing the same stored hash and reduces the utility of precomputed hash tables. A deliberately expensive password hashing function is still necessary.",
+      "explanation_eli5": "Mix a different ingredient into each password before making its fingerprint.",
+      "difficulty": "basic",
+      "tags": ["synthetic-sample"],
+      "source_reference": "Original illustrative question. Confirm mapping against your booked exam objectives.",
+      "change_note": "Initial synthetic sample"
+    },
+    {
+      "external_id": "sample-0007",
+      "category_slug": "threats",
+      "objective_code": "SAMPLE-2",
+      "prompt": "A message impersonates payroll and directs an employee to a fake sign-in page. What is the attack?",
+      "choices": [
+        {
+          "id": "choice-1",
+          "text": "Phishing"
+        },
+        {
+          "id": "choice-2",
+          "text": "Load balancing"
+        },
+        {
+          "id": "choice-3",
+          "text": "Patch management"
+        },
+        {
+          "id": "choice-4",
+          "text": "Data deduplication"
+        }
+      ],
+      "correct_choice_id": "choice-1",
+      "explanation_technical": "Phishing uses deceptive communication to induce a victim to disclose information or perform an unsafe action. An impersonated login page is a common credential theft mechanism.",
+      "explanation_eli5": "Someone wears a fake uniform to trick you into handing over a key.",
+      "difficulty": "basic",
+      "tags": ["synthetic-sample"],
+      "source_reference": "Original illustrative question. Confirm mapping against your booked exam objectives.",
+      "change_note": "Initial synthetic sample"
+    },
+    {
+      "external_id": "sample-0008",
+      "category_slug": "threats",
+      "objective_code": "SAMPLE-2",
+      "prompt": "An attacker enters SQL syntax into a form to change the meaning of a database query. What is the best primary coding defense?",
+      "choices": [
+        {
+          "id": "choice-1",
+          "text": "Parameterized queries"
+        },
+        {
+          "id": "choice-2",
+          "text": "Renaming database tables"
+        },
+        {
+          "id": "choice-3",
+          "text": "Changing the page color"
+        },
+        {
+          "id": "choice-4",
+          "text": "Hiding the submit button"
+        }
+      ],
+      "correct_choice_id": "choice-1",
+      "explanation_technical": "Parameterized queries separate data values from SQL instructions. User input is bound as data rather than concatenated into executable query text.",
+      "explanation_eli5": "Keep a customer\u2019s note in the note box instead of treating it as instructions for the cashier.",
+      "difficulty": "basic",
+      "tags": ["synthetic-sample"],
+      "source_reference": "Original illustrative question. Confirm mapping against your booked exam objectives.",
+      "change_note": "Initial synthetic sample"
+    },
+    {
+      "external_id": "sample-0009",
+      "category_slug": "threats",
+      "objective_code": "SAMPLE-2",
+      "prompt": "Malicious script is stored in a comment and runs when another user views it. Which vulnerability is involved?",
+      "choices": [
+        {
+          "id": "choice-1",
+          "text": "Stored cross-site scripting"
+        },
+        {
+          "id": "choice-2",
+          "text": "ARP spoofing"
+        },
+        {
+          "id": "choice-3",
+          "text": "DNS tunneling"
+        },
+        {
+          "id": "choice-4",
+          "text": "Password spraying"
+        }
+      ],
+      "correct_choice_id": "choice-1",
+      "explanation_technical": "Stored XSS occurs when attacker-controlled content is persisted and later rendered as executable script. Context-appropriate output encoding and safe rendering help prevent it.",
+      "explanation_eli5": "A harmful note is saved on a noticeboard, and the board mistakenly follows its instructions.",
+      "difficulty": "basic",
+      "tags": ["synthetic-sample"],
+      "source_reference": "Original illustrative question. Confirm mapping against your booked exam objectives.",
+      "change_note": "Initial synthetic sample"
+    },
+    {
+      "external_id": "sample-0010",
+      "category_slug": "threats",
+      "objective_code": "SAMPLE-2",
+      "prompt": "An attacker tries one common password against many accounts to avoid repeated failures on one account. What is this technique?",
+      "choices": [
+        {
+          "id": "choice-1",
+          "text": "Password spraying"
+        },
+        {
+          "id": "choice-2",
+          "text": "Credential hashing"
+        },
+        {
+          "id": "choice-3",
+          "text": "Port mirroring"
+        },
+        {
+          "id": "choice-4",
+          "text": "Certificate pinning"
+        }
+      ],
+      "correct_choice_id": "choice-1",
+      "explanation_technical": "Password spraying applies a small number of candidate passwords across many accounts. Per-account controls alone may not detect the broader pattern.",
+      "explanation_eli5": "Someone tries the same common key on many doors.",
+      "difficulty": "basic",
+      "tags": ["synthetic-sample"],
+      "source_reference": "Original illustrative question. Confirm mapping against your booked exam objectives.",
+      "change_note": "Initial synthetic sample"
+    },
+    {
+      "external_id": "sample-0011",
+      "category_slug": "threats",
+      "objective_code": "SAMPLE-2",
+      "prompt": "A workstation is actively encrypting shared files unexpectedly. What is the most appropriate immediate containment action?",
+      "choices": [
+        {
+          "id": "choice-1",
+          "text": "Isolate the affected workstation from the network"
+        },
+        {
+          "id": "choice-2",
+          "text": "Delete every backup"
+        },
+        {
+          "id": "choice-3",
+          "text": "Email the suspicious attachment to coworkers"
+        },
+        {
+          "id": "choice-4",
+          "text": "Disable logging everywhere"
+        }
+      ],
+      "correct_choice_id": "choice-1",
+      "explanation_technical": "Network isolation can limit spread and further access to shared resources during a suspected ransomware incident. Preserve evidence and follow the incident response process.",
+      "explanation_eli5": "Disconnect the leaking pipe first so the water cannot spread to more rooms.",
+      "difficulty": "basic",
+      "tags": ["synthetic-sample"],
+      "source_reference": "Original illustrative question. Confirm mapping against your booked exam objectives.",
+      "change_note": "Initial synthetic sample"
+    },
+    {
+      "external_id": "sample-0012",
+      "category_slug": "threats",
+      "objective_code": "SAMPLE-2",
+      "prompt": "Which action most directly reduces exposure to a known vulnerability for which a vendor has released a fix?",
+      "choices": [
+        {
+          "id": "choice-1",
+          "text": "Apply the tested security patch"
+        },
+        {
+          "id": "choice-2",
+          "text": "Change the desktop wallpaper"
+        },
+        {
+          "id": "choice-3",
+          "text": "Publish the administrator password"
+        },
+        {
+          "id": "choice-4",
+          "text": "Disable asset inventory"
+        }
+      ],
+      "correct_choice_id": "choice-1",
+      "explanation_technical": "A security patch changes vulnerable software to address the defect. Validate the update and deploy it through the organization\u2019s change process.",
+      "explanation_eli5": "Repair the broken lock instead of putting a new sign on the door.",
+      "difficulty": "basic",
+      "tags": ["synthetic-sample"],
+      "source_reference": "Original illustrative question. Confirm mapping against your booked exam objectives.",
+      "change_note": "Initial synthetic sample"
+    },
+    {
+      "external_id": "sample-0013",
+      "category_slug": "architecture",
+      "objective_code": "SAMPLE-3",
+      "prompt": "Why separate guest Wi-Fi from internal business systems?",
+      "choices": [
+        {
+          "id": "choice-1",
+          "text": "To limit guest access and reduce lateral movement"
+        },
+        {
+          "id": "choice-2",
+          "text": "To make passwords shorter"
+        },
+        {
+          "id": "choice-3",
+          "text": "To remove the need for access controls"
+        },
+        {
+          "id": "choice-4",
+          "text": "To ensure every device shares one trust level"
+        }
+      ],
+      "correct_choice_id": "choice-1",
+      "explanation_technical": "Network segmentation restricts communication between groups with different trust requirements. Guest devices generally should not have unrestricted access to business systems.",
+      "explanation_eli5": "Visitors can use the lobby without having keys to the staff offices.",
+      "difficulty": "basic",
+      "tags": ["synthetic-sample"],
+      "source_reference": "Original illustrative question. Confirm mapping against your booked exam objectives.",
+      "change_note": "Initial synthetic sample"
+    },
+    {
+      "external_id": "sample-0014",
+      "category_slug": "architecture",
+      "objective_code": "SAMPLE-3",
+      "prompt": "Which technology primarily protects web traffic against eavesdropping while it travels over a network?",
+      "choices": [
+        {
+          "id": "choice-1",
+          "text": "TLS"
+        },
+        {
+          "id": "choice-2",
+          "text": "RAID"
+        },
+        {
+          "id": "choice-3",
+          "text": "A file extension"
+        },
+        {
+          "id": "choice-4",
+          "text": "Disk defragmentation"
+        }
+      ],
+      "correct_choice_id": "choice-1",
+      "explanation_technical": "TLS protects transport confidentiality and integrity and authenticates endpoints according to its configuration. It does not by itself fix insecure application logic.",
+      "explanation_eli5": "Send your message through a protected tunnel rather than on an open postcard.",
+      "difficulty": "basic",
+      "tags": ["synthetic-sample"],
+      "source_reference": "Original illustrative question. Confirm mapping against your booked exam objectives.",
+      "change_note": "Initial synthetic sample"
+    },
+    {
+      "external_id": "sample-0015",
+      "category_slug": "architecture",
+      "objective_code": "SAMPLE-3",
+      "prompt": "A business needs to keep running when one application server fails. Which design best supports this requirement?",
+      "choices": [
+        {
+          "id": "choice-1",
+          "text": "Redundant application servers with failover"
+        },
+        {
+          "id": "choice-2",
+          "text": "One larger single server without failover"
+        },
+        {
+          "id": "choice-3",
+          "text": "A shared administrator password"
+        },
+        {
+          "id": "choice-4",
+          "text": "Disabling health checks"
+        }
+      ],
+      "correct_choice_id": "choice-1",
+      "explanation_technical": "Redundant servers and tested failover reduce dependence on one application instance. Other shared components must also be considered when eliminating single points of failure.",
+      "explanation_eli5": "Have a second cashier ready when the first checkout stops working.",
+      "difficulty": "basic",
+      "tags": ["synthetic-sample"],
+      "source_reference": "Original illustrative question. Confirm mapping against your booked exam objectives.",
+      "change_note": "Initial synthetic sample"
+    },
+    {
+      "external_id": "sample-0016",
+      "category_slug": "architecture",
+      "objective_code": "SAMPLE-3",
+      "prompt": "Which practice aligns with zero trust?",
+      "choices": [
+        {
+          "id": "choice-1",
+          "text": "Verify access explicitly and grant minimum necessary permissions"
+        },
+        {
+          "id": "choice-2",
+          "text": "Trust all devices once they join the office network"
+        },
+        {
+          "id": "choice-3",
+          "text": "Allow permanent access after one successful login"
+        },
+        {
+          "id": "choice-4",
+          "text": "Remove authentication between internal services"
+        }
+      ],
+      "correct_choice_id": "choice-1",
+      "explanation_technical": "Zero trust avoids granting implicit trust based solely on network location. Access decisions consider identity, context and least privilege.",
+      "explanation_eli5": "Check the visitor\u2019s pass at the relevant door, even if they entered the building earlier.",
+      "difficulty": "basic",
+      "tags": ["synthetic-sample"],
+      "source_reference": "Original illustrative question. Confirm mapping against your booked exam objectives.",
+      "change_note": "Initial synthetic sample"
+    },
+    {
+      "external_id": "sample-0017",
+      "category_slug": "architecture",
+      "objective_code": "SAMPLE-3",
+      "prompt": "What is the primary purpose of a recovery point objective?",
+      "choices": [
+        {
+          "id": "choice-1",
+          "text": "Define the acceptable amount of data loss measured in time"
+        },
+        {
+          "id": "choice-2",
+          "text": "Specify the color of backup equipment"
+        },
+        {
+          "id": "choice-3",
+          "text": "Set the maximum number of employees"
+        },
+        {
+          "id": "choice-4",
+          "text": "Replace restore testing"
+        }
+      ],
+      "correct_choice_id": "choice-1",
+      "explanation_technical": "RPO describes how far back recovered data may be relative to an incident. It informs backup or replication frequency.",
+      "explanation_eli5": "Decide how many minutes of unfinished homework you could afford to lose.",
+      "difficulty": "basic",
+      "tags": ["synthetic-sample"],
+      "source_reference": "Original illustrative question. Confirm mapping against your booked exam objectives.",
+      "change_note": "Initial synthetic sample"
+    },
+    {
+      "external_id": "sample-0018",
+      "category_slug": "architecture",
+      "objective_code": "SAMPLE-3",
+      "prompt": "Why retain a backup that an ordinary compromised workstation cannot modify?",
+      "choices": [
+        {
+          "id": "choice-1",
+          "text": "To preserve a recoverable copy if the workstation is compromised"
+        },
+        {
+          "id": "choice-2",
+          "text": "To make backups accessible to every application"
+        },
+        {
+          "id": "choice-3",
+          "text": "To avoid ever testing restoration"
+        },
+        {
+          "id": "choice-4",
+          "text": "To allow malware to update all copies"
+        }
+      ],
+      "correct_choice_id": "choice-1",
+      "explanation_technical": "Separating backup access can keep an attacker from altering or deleting recovery data using the compromised workstation\u2019s privileges. Recovery still depends on verified backups and tested restores.",
+      "explanation_eli5": "Keep a spare copy somewhere the person with the broken key cannot reach.",
+      "difficulty": "basic",
+      "tags": ["synthetic-sample"],
+      "source_reference": "Original illustrative question. Confirm mapping against your booked exam objectives.",
+      "change_note": "Initial synthetic sample"
+    },
+    {
+      "external_id": "sample-0019",
+      "category_slug": "operations",
+      "objective_code": "SAMPLE-4",
+      "prompt": "A security team correlates logs from multiple systems to investigate suspicious activity. Which platform commonly supports this task?",
+      "choices": [
+        {
+          "id": "choice-1",
+          "text": "SIEM"
+        },
+        {
+          "id": "choice-2",
+          "text": "A word processor"
+        },
+        {
+          "id": "choice-3",
+          "text": "A disk partition manager"
+        },
+        {
+          "id": "choice-4",
+          "text": "An image editor"
+        }
+      ],
+      "correct_choice_id": "choice-1",
+      "explanation_technical": "A security information and event management platform collects and correlates events to support detection and investigation. Its usefulness depends on log quality and configured detections.",
+      "explanation_eli5": "Bring the reports from every room to one desk so you can connect the clues.",
+      "difficulty": "basic",
+      "tags": ["synthetic-sample"],
+      "source_reference": "Original illustrative question. Confirm mapping against your booked exam objectives.",
+      "change_note": "Initial synthetic sample"
+    },
+    {
+      "external_id": "sample-0020",
+      "category_slug": "operations",
+      "objective_code": "SAMPLE-4",
+      "prompt": "What should an incident response team do after completing recovery and gathering the incident details?",
+      "choices": [
+        {
+          "id": "choice-1",
+          "text": "Conduct a lessons-learned review"
+        },
+        {
+          "id": "choice-2",
+          "text": "Immediately destroy all evidence"
+        },
+        {
+          "id": "choice-3",
+          "text": "Publish all passwords"
+        },
+        {
+          "id": "choice-4",
+          "text": "Permanently stop monitoring"
+        }
+      ],
+      "correct_choice_id": "choice-1",
+      "explanation_technical": "A lessons-learned review identifies improvements to controls, preparation and response. Findings should result in owned, actionable changes.",
+      "explanation_eli5": "After fixing a leak, work out why it happened and how to avoid another one.",
+      "difficulty": "basic",
+      "tags": ["synthetic-sample"],
+      "source_reference": "Original illustrative question. Confirm mapping against your booked exam objectives.",
+      "change_note": "Initial synthetic sample"
+    },
+    {
+      "external_id": "sample-0021",
+      "category_slug": "operations",
+      "objective_code": "SAMPLE-4",
+      "prompt": "Why synchronize clocks across systems that generate security logs?",
+      "choices": [
+        {
+          "id": "choice-1",
+          "text": "To reconstruct the order of events more accurately"
+        },
+        {
+          "id": "choice-2",
+          "text": "To encrypt every log entry automatically"
+        },
+        {
+          "id": "choice-3",
+          "text": "To eliminate all false positives"
+        },
+        {
+          "id": "choice-4",
+          "text": "To prevent users from accessing the network"
+        }
+      ],
+      "correct_choice_id": "choice-1",
+      "explanation_technical": "Consistent timestamps help investigators correlate events across systems. Clock synchronization does not replace log integrity or retention controls.",
+      "explanation_eli5": "Make sure all witnesses\u2019 watches agree before lining up their stories.",
+      "difficulty": "basic",
+      "tags": ["synthetic-sample"],
+      "source_reference": "Original illustrative question. Confirm mapping against your booked exam objectives.",
+      "change_note": "Initial synthetic sample"
+    },
+    {
+      "external_id": "sample-0022",
+      "category_slug": "operations",
+      "objective_code": "SAMPLE-4",
+      "prompt": "An organization cannot say which systems run an affected software version. Which operational capability needs improvement?",
+      "choices": [
+        {
+          "id": "choice-1",
+          "text": "Asset and software inventory"
+        },
+        {
+          "id": "choice-2",
+          "text": "Office lighting"
+        },
+        {
+          "id": "choice-3",
+          "text": "Logo design"
+        },
+        {
+          "id": "choice-4",
+          "text": "Email signatures"
+        }
+      ],
+      "correct_choice_id": "choice-1",
+      "explanation_technical": "An accurate inventory links assets with software and versions. This enables teams to identify exposure and prioritize remediation.",
+      "explanation_eli5": "You need a list of your doors before checking which ones have a faulty lock.",
+      "difficulty": "basic",
+      "tags": ["synthetic-sample"],
+      "source_reference": "Original illustrative question. Confirm mapping against your booked exam objectives.",
+      "change_note": "Initial synthetic sample"
+    },
+    {
+      "external_id": "sample-0023",
+      "category_slug": "operations",
+      "objective_code": "SAMPLE-4",
+      "prompt": "A user changes roles but keeps powerful permissions from their previous job. What should address this?",
+      "choices": [
+        {
+          "id": "choice-1",
+          "text": "Access recertification and removal of unnecessary privileges"
+        },
+        {
+          "id": "choice-2",
+          "text": "Adding more shared accounts"
+        },
+        {
+          "id": "choice-3",
+          "text": "Disabling account reviews"
+        },
+        {
+          "id": "choice-4",
+          "text": "Copying the old role to every employee"
+        }
+      ],
+      "correct_choice_id": "choice-1",
+      "explanation_technical": "Periodic and event-driven access reviews identify permissions that are no longer justified. Role changes should trigger adjustment of access rights.",
+      "explanation_eli5": "Return the old office keys when you move to a different job.",
+      "difficulty": "basic",
+      "tags": ["synthetic-sample"],
+      "source_reference": "Original illustrative question. Confirm mapping against your booked exam objectives.",
+      "change_note": "Initial synthetic sample"
+    },
+    {
+      "external_id": "sample-0024",
+      "category_slug": "operations",
+      "objective_code": "SAMPLE-4",
+      "prompt": "Why test a backup restoration instead of relying only on a successful backup status?",
+      "choices": [
+        {
+          "id": "choice-1",
+          "text": "To verify that the data can actually be recovered and used"
+        },
+        {
+          "id": "choice-2",
+          "text": "To make the backup smaller automatically"
+        },
+        {
+          "id": "choice-3",
+          "text": "To avoid keeping recovery instructions"
+        },
+        {
+          "id": "choice-4",
+          "text": "To permanently disable production monitoring"
+        }
+      ],
+      "correct_choice_id": "choice-1",
+      "explanation_technical": "A backup job can report success even when the recovery process is incomplete or the resulting data is unusable. A restore test validates recoverability.",
+      "explanation_eli5": "A spare tire is useful only if it fits and holds air.",
+      "difficulty": "basic",
+      "tags": ["synthetic-sample"],
+      "source_reference": "Original illustrative question. Confirm mapping against your booked exam objectives.",
+      "change_note": "Initial synthetic sample"
+    },
+    {
+      "external_id": "sample-0025",
+      "category_slug": "governance",
+      "objective_code": "SAMPLE-5",
+      "prompt": "A company buys cyber insurance for part of its financial exposure. Which risk response does this illustrate?",
+      "choices": [
+        {
+          "id": "choice-1",
+          "text": "Risk transfer"
+        },
+        {
+          "id": "choice-2",
+          "text": "Risk elimination"
+        },
+        {
+          "id": "choice-3",
+          "text": "Risk avoidance of every activity"
+        },
+        {
+          "id": "choice-4",
+          "text": "Proof that incidents cannot occur"
+        }
+      ],
+      "correct_choice_id": "choice-1",
+      "explanation_technical": "Insurance can transfer specified financial consequences to another party under agreed terms. It does not remove the underlying security risk or all responsibilities.",
+      "explanation_eli5": "Someone agrees to help pay for covered damage, but the accident can still happen.",
+      "difficulty": "basic",
+      "tags": ["synthetic-sample"],
+      "source_reference": "Original illustrative question. Confirm mapping against your booked exam objectives.",
+      "change_note": "Initial synthetic sample"
+    },
+    {
+      "external_id": "sample-0026",
+      "category_slug": "governance",
+      "objective_code": "SAMPLE-5",
+      "prompt": "What is the purpose of classifying information?",
+      "choices": [
+        {
+          "id": "choice-1",
+          "text": "To apply handling and protection rules appropriate to sensitivity"
+        },
+        {
+          "id": "choice-2",
+          "text": "To make all information public"
+        },
+        {
+          "id": "choice-3",
+          "text": "To remove access permissions"
+        },
+        {
+          "id": "choice-4",
+          "text": "To replace data ownership"
+        }
+      ],
+      "correct_choice_id": "choice-1",
+      "explanation_technical": "Classification establishes categories that guide access, storage, sharing and retention. Protection should match sensitivity and organizational requirements.",
+      "explanation_eli5": "Label boxes so everyone knows which need a lock and which can sit on an open shelf.",
+      "difficulty": "basic",
+      "tags": ["synthetic-sample"],
+      "source_reference": "Original illustrative question. Confirm mapping against your booked exam objectives.",
+      "change_note": "Initial synthetic sample"
+    },
+    {
+      "external_id": "sample-0027",
+      "category_slug": "governance",
+      "objective_code": "SAMPLE-5",
+      "prompt": "Why require one person to request a payment and another to approve it?",
+      "choices": [
+        {
+          "id": "choice-1",
+          "text": "Separation of duties"
+        },
+        {
+          "id": "choice-2",
+          "text": "Single sign-on"
+        },
+        {
+          "id": "choice-3",
+          "text": "Data compression"
+        },
+        {
+          "id": "choice-4",
+          "text": "Load balancing"
+        }
+      ],
+      "correct_choice_id": "choice-1",
+      "explanation_technical": "Separating incompatible responsibilities reduces the opportunity for one individual to carry out an unauthorized action without oversight. It does not eliminate collusion risk.",
+      "explanation_eli5": "One person writes the check, and someone else checks that it should be paid.",
+      "difficulty": "basic",
+      "tags": ["synthetic-sample"],
+      "source_reference": "Original illustrative question. Confirm mapping against your booked exam objectives.",
+      "change_note": "Initial synthetic sample"
+    },
+    {
+      "external_id": "sample-0028",
+      "category_slug": "governance",
+      "objective_code": "SAMPLE-5",
+      "prompt": "Which document generally states mandatory high-level management expectations for security?",
+      "choices": [
+        {
+          "id": "choice-1",
+          "text": "A security policy"
+        },
+        {
+          "id": "choice-2",
+          "text": "An individual packet capture"
+        },
+        {
+          "id": "choice-3",
+          "text": "A temporary browser cache"
+        },
+        {
+          "id": "choice-4",
+          "text": "A product advertisement"
+        }
+      ],
+      "correct_choice_id": "choice-1",
+      "explanation_technical": "A policy sets organizational requirements and direction. Standards and procedures supply more specific requirements and execution steps.",
+      "explanation_eli5": "The house rule says doors must be locked; a separate instruction explains how to lock each door.",
+      "difficulty": "basic",
+      "tags": ["synthetic-sample"],
+      "source_reference": "Original illustrative question. Confirm mapping against your booked exam objectives.",
+      "change_note": "Initial synthetic sample"
+    },
+    {
+      "external_id": "sample-0029",
+      "category_slug": "governance",
+      "objective_code": "SAMPLE-5",
+      "prompt": "Why assess a vendor before giving it access to sensitive company data?",
+      "choices": [
+        {
+          "id": "choice-1",
+          "text": "To understand and manage third-party risk"
+        },
+        {
+          "id": "choice-2",
+          "text": "To guarantee that incidents are impossible"
+        },
+        {
+          "id": "choice-3",
+          "text": "To avoid defining contractual requirements"
+        },
+        {
+          "id": "choice-4",
+          "text": "To transfer every legal responsibility automatically"
+        }
+      ],
+      "correct_choice_id": "choice-1",
+      "explanation_technical": "Vendor assessment evaluates whether another organization\u2019s controls and practices meet the intended access and data-handling requirements. Risk remains subject to ongoing monitoring.",
+      "explanation_eli5": "Check who you are giving a spare key to and how they will keep it safe.",
+      "difficulty": "basic",
+      "tags": ["synthetic-sample"],
+      "source_reference": "Original illustrative question. Confirm mapping against your booked exam objectives.",
+      "change_note": "Initial synthetic sample"
+    },
+    {
+      "external_id": "sample-0030",
+      "category_slug": "governance",
+      "objective_code": "SAMPLE-5",
+      "prompt": "What does a business impact analysis primarily help identify?",
+      "choices": [
+        {
+          "id": "choice-1",
+          "text": "Critical processes and the consequences of their disruption"
+        },
+        {
+          "id": "choice-2",
+          "text": "The best social media posting time"
+        },
+        {
+          "id": "choice-3",
+          "text": "Every possible attacker identity"
+        },
+        {
+          "id": "choice-4",
+          "text": "An automatic replacement for security controls"
+        }
+      ],
+      "correct_choice_id": "choice-1",
+      "explanation_technical": "A BIA identifies important business activities, dependencies and disruption impacts. Its results inform recovery priorities and objectives.",
+      "explanation_eli5": "Work out which parts of the shop must reopen first and what happens if they stay closed.",
+      "difficulty": "basic",
+      "tags": ["synthetic-sample"],
+      "source_reference": "Original illustrative question. Confirm mapping against your booked exam objectives.",
+      "change_note": "Initial synthetic sample"
+    }
+  ]
+}
