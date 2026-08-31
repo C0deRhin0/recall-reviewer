@@ -1,0 +1,43 @@
+# Secrets and machine-specific environment
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.pem
+*.key
+*.p12
+*.pfx
+.npmrc
+.netrc
+.envrc
+
+# Runtime, generated output and local provider links
+node_modules/
+.next/
+out/
+dist/
+coverage/
+playwright-report/
+test-results/
+.vercel/
+.supabase/
+supabase/.temp/
+supabase/.branches/
+*.tsbuildinfo
+*.log
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Private operational data and content
+private/
+backups/
+exports/
+imports/
+content/private/
+content/production/
+*.dump
+*.backup
+*.sql.gz
