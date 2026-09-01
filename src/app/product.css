@@ -1,0 +1,836 @@
+/* Application density: controls first, supporting detail on demand. */
+.app-shell {
+  grid-template-columns: 208px minmax(0, 1fr);
+}
+.sidebar {
+  padding: 25px 14px 0;
+}
+.sidebar > .brand {
+  font-size: 21px;
+  gap: 8px;
+  margin-left: 8px;
+}
+.brand-mark {
+  width: 16px;
+  height: 20px;
+}
+.workspace-label {
+  margin: 30px 10px 22px;
+  gap: 3px;
+}
+.workspace-label strong {
+  font-size: 14px;
+}
+.workspace-label .mono {
+  font-size: 10px;
+}
+.sidebar nav {
+  gap: 3px;
+}
+.nav-item {
+  min-height: 38px;
+  padding: 8px 12px;
+  font-size: 13px;
+}
+.account {
+  padding: 17px 4px;
+}
+.account strong {
+  font-size: 12px;
+}
+.topbar {
+  height: 43px;
+  padding: 0 32px;
+  justify-content: flex-end;
+}
+.topbar-right {
+  font-size: 11px;
+}
+.main-content {
+  max-width: 1100px;
+  padding: 28px 32px 40px;
+  margin: 0 auto;
+}
+.page-heading {
+  margin-bottom: 24px;
+  gap: 16px;
+  align-items: center;
+}
+.page-heading h1,
+.page-heading > h1 {
+  font-size: 25px;
+  letter-spacing: -0.65px;
+  line-height: 1.3;
+  margin: 0;
+}
+.page-heading .eyebrow:empty,
+.page-heading > div:empty {
+  display: none;
+}
+h2,
+.section-heading h2 {
+  font-size: 16px;
+  letter-spacing: -0.2px;
+}
+.section-heading {
+  margin-bottom: 14px;
+  align-items: center;
+}
+.section-block {
+  margin-top: 28px;
+}
+.button {
+  min-height: 38px;
+  padding: 8px 14px;
+  font-size: 13px;
+  gap: 12px;
+}
+.button.primary {
+  font-weight: 500;
+}
+.text-button {
+  min-height: 32px;
+  padding: 5px 0;
+  font-size: 12px;
+}
+.action-strip {
+  gap: 8px;
+}
+input,
+select,
+textarea {
+  min-height: 39px;
+  padding: 8px 11px;
+  font-size: 13px;
+}
+label {
+  font-size: 12px;
+}
+label > input,
+label > select,
+label > textarea {
+  margin-top: 6px;
+}
+.notice {
+  font-size: 13px;
+  padding: 12px 15px;
+}
+.empty-state {
+  border: 0;
+  border-top: 1px solid var(--line);
+  text-align: left;
+  padding: 20px 0;
+}
+.empty-state p {
+  font-size: 13px;
+}
+.desk-heading {
+  margin-bottom: 30px;
+}
+.desk-section {
+  padding: 21px 0;
+  border-top: 1px solid var(--line);
+}
+.desk-section:last-child {
+  padding-bottom: 0;
+}
+.desk-section .section-heading {
+  margin: 0 0 16px;
+}
+.desk-section h2 {
+  font-size: 14px;
+  font-weight: 500;
+}
+.today-progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 11px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+progress {
+  appearance: none;
+  border: 0;
+  background: var(--line);
+  border-radius: 2px;
+  height: 4px;
+  width: 76px;
+  overflow: hidden;
+}
+progress::-webkit-progress-bar {
+  background: var(--line);
+}
+progress::-webkit-progress-value {
+  background: var(--amber);
+}
+progress::-moz-progress-bar {
+  background: var(--amber);
+}
+.quick-controls {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) 100px auto;
+  align-items: end;
+  gap: 16px;
+  max-width: 630px;
+}
+.pool-count {
+  font-size: 11px;
+  color: var(--dim);
+  padding-bottom: 10px;
+  white-space: nowrap;
+}
+.session-options {
+  margin-top: 15px;
+  max-width: 630px;
+}
+.session-options summary,
+.import-help summary {
+  font-size: 12px;
+  color: var(--muted);
+  cursor: pointer;
+  width: fit-content;
+  padding: 5px 0;
+  min-height: 28px;
+}
+.options-fields {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin: 10px 0 16px;
+}
+.options-fields > label:first-child {
+  width: 240px;
+}
+.options-fields .checkbox {
+  margin-top: 20px;
+  white-space: nowrap;
+  font-size: 12px;
+}
+.practice-shortcuts {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+.practice-shortcuts > button {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  min-height: 34px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 6px 11px;
+  font-size: 12px;
+}
+.practice-shortcuts > button > span {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 10px;
+}
+.practice-shortcuts > button:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.inline-progress {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  margin: 0;
+}
+.inline-progress > div {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+}
+.inline-progress dt {
+  font-size: 12px;
+  color: var(--muted);
+}
+.inline-progress dd {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.inline-progress dd span {
+  font-weight: 400;
+  color: var(--muted);
+  font-size: 12px;
+}
+.quiet-count {
+  font-size: 11px;
+  color: var(--muted);
+}
+.continue-row {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 24px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--surface);
+  padding: 13px 16px;
+  margin-top: 8px;
+  text-align: left;
+}
+.session-title {
+  flex: 1;
+  font-size: 13px;
+}
+.session-title > span {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.continue-action {
+  font-size: 12px;
+  color: var(--amber);
+  display: flex;
+  gap: 16px;
+}
+.continue-row:hover .session-title {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.recent-row {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 24px;
+  min-height: 44px;
+  padding: 11px 0;
+  border-top: 1px solid #292e31;
+  text-align: left;
+  font-size: 12px;
+}
+.recent-row > span:first-child {
+  flex: 1;
+}
+.recent-date {
+  color: var(--muted);
+  font-size: 11px;
+}
+.recent-score {
+  font-family: var(--mono);
+  font-size: 11px;
+  min-width: 48px;
+  text-align: right;
+}
+.recent-row > span:last-child {
+  color: var(--muted);
+}
+.compact-empty {
+  font-size: 12px;
+  color: var(--dim);
+  padding: 4px 0 10px;
+}
+.desk-section .text-button {
+  color: var(--muted);
+}
+.metrics {
+  padding: 16px 0;
+  margin-bottom: 20px;
+}
+.metric-value {
+  font-size: 24px;
+  margin: 8px 0 4px;
+}
+.metric-value > span {
+  font-size: 13px;
+}
+.metric .eyebrow {
+  font-size: 9px;
+}
+.metric .fine-print {
+  font-size: 10px;
+}
+.session-row {
+  padding: 14px 0;
+}
+.session-name {
+  font-size: 13px;
+}
+.session-name > span {
+  font-size: 10px;
+}
+.session-state {
+  font-size: 12px;
+}
+.coverage-row {
+  padding: 16px 0;
+}
+.coverage-row strong {
+  font-size: 13px;
+}
+.objective-grid {
+  gap: 12px;
+}
+.objective {
+  border: 0;
+  border-left: 1px solid var(--line);
+  border-radius: 0;
+  padding: 8px 18px;
+  gap: 8px;
+}
+.objective strong {
+  font-size: 22px;
+}
+.setup-grid {
+  display: block;
+  max-width: 700px;
+}
+.setup-form {
+  border: 0;
+  border-top: 1px solid var(--line);
+  background: transparent;
+  border-radius: 0;
+  padding: 22px 0 0;
+}
+.field-section {
+  padding-bottom: 21px;
+  margin-bottom: 21px;
+}
+.field-section > .eyebrow {
+  font-family: var(--sans);
+  font-size: 13px;
+  letter-spacing: 0;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+.mode-grid {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+.mode-option {
+  min-height: 36px;
+  padding: 8px 12px;
+}
+.mode-option strong {
+  font-size: 12px;
+  font-weight: 400;
+}
+.field-section .checkbox {
+  font-size: 12px;
+}
+.setup-form > .button {
+  width: auto;
+  min-width: 160px;
+}
+.setup-form .form-row > label {
+  max-width: 320px;
+}
+.field-section > label > select {
+  max-width: 320px;
+}
+.question-prompt {
+  font-size: 24px;
+  line-height: 1.5;
+}
+.practice-top {
+  margin-bottom: 14px;
+}
+.question-sidebar > p.subtle {
+  display: none;
+}
+.question-navigation > .button {
+  min-height: 40px;
+}
+.result-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 0;
+  border: 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: none;
+  margin-bottom: 24px;
+  border-radius: 0;
+}
+.result-banner h1 {
+  font-size: 32px;
+  margin: 8px 0;
+}
+.result-banner h1 span {
+  font-size: 21px;
+}
+.result-banner .button {
+  margin: 0;
+}
+.result-banner p {
+  font-size: 12px;
+}
+.source-note summary {
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 11px;
+  padding: 8px 0;
+}
+.source-note p {
+  font-size: 12px;
+  color: var(--muted);
+}
+.bank-summary {
+  padding: 14px 0;
+  border: 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  border-radius: 0;
+}
+.bank-summary h2 {
+  font-size: 16px;
+  margin: 5px 0;
+}
+.bank-summary .subtle {
+  font-size: 11px;
+}
+.import-panel {
+  padding: 0;
+  border: 0;
+}
+.import-panel .section-heading {
+  margin-bottom: 8px;
+}
+.import-help {
+  margin-bottom: 16px;
+}
+.import-help p {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 7px 0;
+}
+.code-input {
+  min-height: 180px;
+}
+.release-row {
+  padding: 16px 0;
+}
+.release-row strong {
+  font-size: 13px;
+}
+.release-row .button {
+  font-size: 12px;
+}
+.settings-panel {
+  padding: 20px 0;
+  background: none;
+  border: 0;
+  border-top: 1px solid var(--line);
+  border-radius: 0;
+}
+.settings-panel h2 {
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+.settings-panel label {
+  margin-bottom: 18px;
+}
+.auth-layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 36px 24px;
+  gap: 28px;
+}
+.auth-story {
+  display: block;
+  padding: 0;
+  background: none;
+  border: 0;
+}
+.auth-panel {
+  padding: 0;
+  display: block;
+  width: 100%;
+  max-width: 350px;
+}
+.auth-form h1 {
+  font-size: 23px;
+  letter-spacing: -0.5px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+.auth-form > .subtle {
+  font-size: 12px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+.auth-form > .fine-print:empty {
+  display: none;
+}
+.auth-form .wide {
+  margin-top: 8px;
+  min-height: 42px;
+}
+@media (max-width: 980px) {
+  .app-shell {
+    grid-template-columns: 184px minmax(0, 1fr);
+  }
+  .main-content {
+    padding: 24px;
+  }
+  .metrics {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .quick-controls {
+    grid-template-columns: minmax(150px, 1fr) 90px;
+  }
+  .pool-count {
+    grid-column: 1/-1;
+    padding: 0;
+    margin-top: -8px;
+  }
+  .result-banner {
+    display: flex;
+  }
+  .inline-progress {
+    gap: 24px;
+  }
+}
+@media (max-width: 700px) {
+  .app-shell {
+    display: block;
+  }
+  .sidebar {
+    padding: 18px 18px 0;
+  }
+  .sidebar > .brand {
+    margin-left: 0;
+    font-size: 20px;
+  }
+  .workspace-label {
+    margin: 0;
+  }
+  .sidebar nav {
+    margin-top: 17px;
+    gap: 4px;
+  }
+  .nav-item {
+    min-height: 42px;
+    padding: 10px 11px;
+    font-size: 12px;
+  }
+  .topbar {
+    height: 32px;
+    padding: 0 20px;
+  }
+  .topbar-right {
+    font-size: 10px;
+  }
+  .main-content {
+    padding: 22px 20px 32px;
+  }
+  .page-heading,
+  .desk-heading {
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .page-heading h1,
+  .page-heading > h1 {
+    font-size: 23px;
+  }
+  .page-heading > .button {
+    width: auto;
+  }
+  .desk-heading {
+    align-items: center;
+  }
+  .desk-heading > .action-strip {
+    gap: 7px;
+  }
+  .desk-heading .button {
+    min-height: 38px;
+    padding: 8px 10px;
+    font-size: 12px;
+    gap: 8px;
+  }
+  .desk-heading .button.secondary {
+    padding: 7px 0;
+    border: 0;
+  }
+  .desk-section {
+    padding: 18px 0;
+  }
+  .desk-section .section-heading {
+    flex-wrap: nowrap;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .desk-section h2 {
+    font-size: 13px;
+  }
+  .today-progress {
+    gap: 8px;
+    font-size: 10px;
+  }
+  .today-progress progress {
+    width: 42px;
+  }
+  .quick-controls {
+    grid-template-columns: minmax(0, 1fr) 75px;
+    gap: 12px;
+  }
+  .quick-controls select {
+    max-width: 100%;
+  }
+  .pool-count {
+    font-size: 10px;
+  }
+  .quick-controls input,
+  .quick-controls select {
+    font-size: 12px;
+    min-height: 42px;
+  }
+  .options-fields {
+    align-items: flex-start;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .options-fields > label:first-child {
+    width: 100%;
+  }
+  .options-fields .checkbox {
+    margin: 0;
+    min-height: 32px;
+  }
+  .practice-shortcuts {
+    gap: 6px;
+    margin-top: 13px;
+  }
+  .practice-shortcuts > button {
+    gap: 10px;
+    font-size: 11px;
+    padding: 7px 9px;
+    min-height: 38px;
+  }
+  .inline-progress {
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .inline-progress > div {
+    gap: 8px;
+  }
+  .inline-progress dt {
+    font-size: 11px;
+  }
+  .inline-progress dd {
+    font-size: 13px;
+  }
+  .inline-progress dd span {
+    font-size: 11px;
+  }
+  .continue-row {
+    padding: 12px;
+    gap: 12px;
+  }
+  .continue-row progress {
+    width: 45px;
+  }
+  .continue-action {
+    gap: 6px;
+    font-size: 11px;
+  }
+  .session-title {
+    font-size: 12px;
+  }
+  .recent-row {
+    gap: 14px;
+    min-height: 44px;
+  }
+  .recent-date {
+    font-size: 10px;
+  }
+  .recent-score {
+    min-width: 36px;
+    font-size: 10px;
+  }
+  .compact-empty {
+    font-size: 12px;
+  }
+  .section-heading > .fine-print {
+    font-size: 10px;
+  }
+  .setup-form {
+    padding: 18px 0 0;
+  }
+  .mode-option {
+    min-height: 40px;
+    padding: 9px 11px;
+  }
+  .mode-option strong {
+    font-size: 12px;
+  }
+  .question-prompt {
+    font-size: 21px;
+  }
+  .question-map button {
+    min-height: 40px;
+  }
+  .result-banner {
+    gap: 18px;
+    flex-wrap: wrap;
+  }
+  .result-banner > div:last-child {
+    padding: 0;
+    border: 0;
+  }
+  .result-banner h1 {
+    font-size: 30px;
+  }
+  .result-banner .button {
+    width: auto;
+  }
+  .bank-summary {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+  }
+  .bank-summary h2 {
+    font-size: 15px;
+  }
+  .bank-summary > .mono {
+    font-size: 9px;
+  }
+  .import-panel {
+    padding: 0;
+  }
+  .import-panel .form-row {
+    gap: 12px;
+  }
+  .settings-panel {
+    padding: 20px 0;
+  }
+  .settings-grid {
+    gap: 0;
+  }
+  .auth-story h1 {
+    font-size: 23px;
+  }
+}
+@media (max-width: 370px) {
+  .desk-heading {
+    align-items: flex-start;
+  }
+  .desk-heading > .action-strip {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .inline-progress {
+    gap: 10px;
+  }
+  .inline-progress > div {
+    gap: 5px;
+  }
+}
+@media (max-width: 700px) {
+  .sidebar nav {
+    margin-right: -18px;
+    padding-right: 18px;
+  }
+}
