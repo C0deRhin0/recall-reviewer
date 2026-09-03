@@ -41,3 +41,4 @@ content/production/
 *.dump
 *.backup
 *.sql.gz
+
