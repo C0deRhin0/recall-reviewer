@@ -8,3 +8,4 @@
 - Added security, domain, SQL-permission and browser verification.
 
 This is an application version. It is independent of the v7 syllabus/content edition. No Git release tag or commit has been created.
+<!-- Capture a cleanup item for changelog documentation -->
