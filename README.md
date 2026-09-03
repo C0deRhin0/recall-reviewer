@@ -71,3 +71,4 @@ Run `npm run hygiene` before publishing. It checks Git's actual candidate files,
 Publish this directory as its own repository. Review the staged file list before the first commit. Do not force-add ignored files or upload a ZIP of the entire working folder. Publishing source does not deploy the app; configure Vercel deployment controls separately before connecting GitHub. Live Supabase/Vercel verification remains required before a production launch.
 
 The project has not been initialized as a Git repository. No commits, pushes or deployment connections have been created.
+<!-- Document the next adjustment for project documentation -->
