@@ -47,3 +47,4 @@ Preference-save/reload regression tests preserve identity, sessions, selected an
 Local sign-out revokes the session but now retains an opaque, HTTP-only workspace cookie, valid for one year, that permits the local-only demo entry point to reopen the same workspace. Active older sessions adopt this cookie on bootstrap. This does not restore previously signed-out workspaces whose browser credentials were already deleted. Different browser contexts remain separate, and managed mode rejects demo entry even if a local workspace cookie exists.
 
 Loopback page navigation redirects to APP_ORIGIN so localhost and 127.0.0.1 do not silently select separate cookie stores. Clearing browser data still removes the local workspace association; it does not erase server-side records. Existing records were preserved during this change, with no automatic merging of workspaces.
+<!-- Capture a cleanup item for implementation documentation -->
