@@ -13,3 +13,4 @@ export default defineConfig({
   reporter: "list",
   outputDir: "test-results",
 });
+// Align local documentation for playwright config module
