@@ -61,3 +61,4 @@ Before connecting a Git repository, configure production deployment controls so 
 - Reviewed exam content, correct syllabus mapping, provider usage limits and alerting.
 
 These depend on actual provider configuration and are not represented as locally verified.
+<!-- Clarify implementation notes for deployment documentation -->
