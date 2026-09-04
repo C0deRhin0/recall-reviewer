@@ -32,3 +32,4 @@ Previous/Next stays at the top of the reading area. The bottom action dock submi
 Reasoning appears directly beneath the submitted choice (or the correct choice for an unanswered completed question). Technical and ELI5 controls show one explanation at a time. Source and revision details remain expandable. The server still controls whether reasoning may appear.
 
 Use the small shared outline icon vocabulary for actions and state, and a vector score ring in the results rail. The top-right action becomes New session after completion; do not add a second completion banner.
+<!-- Capture a cleanup item for ui guidelines documentation -->
