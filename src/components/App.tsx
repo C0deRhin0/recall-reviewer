@@ -439,3 +439,4 @@ function Progress({
     </>
   );
 }
+// Clarify implementation notes for app module
