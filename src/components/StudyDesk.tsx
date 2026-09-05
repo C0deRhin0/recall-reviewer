@@ -278,3 +278,4 @@ export default function StudyDesk({
     </div>
   );
 }
+// Clarify implementation notes for studydesk module
