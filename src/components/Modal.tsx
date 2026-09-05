@@ -33,3 +33,4 @@ export default function Modal({
     </dialog>
   );
 }
+// Refine the surrounding context for modal module
