@@ -320,3 +320,4 @@ export default function Settings({
     </>
   );
 }
+// Review follow-up details for settings module
