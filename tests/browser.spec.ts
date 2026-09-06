@@ -491,3 +491,4 @@ test("loopback navigation and reopening demo preserve the current workspace", as
   expect((await boot(page)).b.user.id).toBe(before.user.id);
   expect((await boot(page)).b.profile.name).toBe("Remembered workspace");
 });
+// Capture a cleanup item for browser spec module
