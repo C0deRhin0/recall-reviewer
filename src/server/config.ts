@@ -41,3 +41,4 @@ export function config() {
       .filter(Boolean),
   };
 }
+// Capture a cleanup item for config module
