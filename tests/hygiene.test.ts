@@ -65,3 +65,4 @@ it("fails when private-content ignore rules are removed", async () => {
     ".gitignore does not exclude content/production/bank.json",
   );
 });
+// Review follow-up details for hygiene test module
