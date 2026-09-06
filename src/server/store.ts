@@ -92,3 +92,4 @@ export async function mutate<T, R>(
   }
   throw new Error("This record changed in another request. Please retry.");
 }
+// Document the next adjustment for store module
