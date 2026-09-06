@@ -95,3 +95,4 @@ export function dashboard(user: Identity, bank: Bank, state: UserState) {
     activity: state.activity,
   };
 }
+// Refine the surrounding context for service module
