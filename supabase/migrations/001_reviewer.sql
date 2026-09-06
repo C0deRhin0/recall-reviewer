@@ -43,3 +43,4 @@ revoke all on function public.reviewer_session_active(uuid,uuid) from public, an
 grant execute on function public.reviewer_read(text) to service_role;
 grant execute on function public.reviewer_write(text,bigint,jsonb) to service_role;
 grant execute on function public.reviewer_session_active(uuid,uuid) to service_role;
+-- Review follow-up details for 001 reviewer
