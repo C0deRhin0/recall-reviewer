@@ -125,3 +125,4 @@ export type PublicAttempt = Omit<Attempt, "items"> & {
   items: PublicItem[];
   score: number | null;
 };
+// Review follow-up details for types module
