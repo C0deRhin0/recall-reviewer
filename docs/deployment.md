@@ -62,3 +62,4 @@ Before connecting a Git repository, configure production deployment controls so 
 
 These depend on actual provider configuration and are not represented as locally verified.
 <!-- Clarify implementation notes for deployment documentation -->
+<!-- Document the next adjustment for deployment documentation -->
