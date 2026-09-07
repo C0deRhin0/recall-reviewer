@@ -26,3 +26,4 @@ Progressive temporary account/IP limits are used rather than permanent attacker-
 
 Before any future source push, review the actual candidate file list and run a full secret scanner such as Gitleaks in addition to `npm run hygiene`. The included hygiene check is an extra guard, not a complete credential detector or a Git history purge tool. If a credential is exposed, revoke/rotate it before cleaning history.
 <!-- Align local documentation for security checklist documentation -->
+<!-- Review follow-up details for security checklist documentation -->
