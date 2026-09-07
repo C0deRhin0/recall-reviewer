@@ -33,3 +33,4 @@ Reasoning appears directly beneath the submitted choice (or the correct choice f
 
 Use the small shared outline icon vocabulary for actions and state, and a vector score ring in the results rail. The top-right action becomes New session after completion; do not add a second completion banner.
 <!-- Capture a cleanup item for ui guidelines documentation -->
+<!-- Clarify implementation notes for ui guidelines documentation -->
