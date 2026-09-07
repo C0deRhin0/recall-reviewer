@@ -23,3 +23,4 @@ Configure and verify an automated daily off-site backup before production use. K
 
 Supabase documents paid managed backups and recommends off-site exports for free projects. Storage objects, if later introduced, need separate backup handling. [Supabase backup documentation](https://supabase.com/docs/guides/platform/backups)
 <!-- Document the next adjustment for backup restore documentation -->
+<!-- Capture a cleanup item for backup restore documentation -->
