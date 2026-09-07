@@ -44,3 +44,4 @@ Attempts store exam code, syllabus edition and release ID. Bookmarks, due review
 
 No real project IDs, domains, credentials or bank content are embedded in source. `APP_MODE=demo` requires a loopback origin and is rejected whenever `VERCEL` is set. Managed mode requires explicit provider configuration and stores data remotely. `.env.example` contains placeholders, while `.env.local`, `.vercel/`, private records and generated output are ignored.
 <!-- Refine the surrounding context for architecture documentation -->
+<!-- Align local documentation for architecture documentation -->
