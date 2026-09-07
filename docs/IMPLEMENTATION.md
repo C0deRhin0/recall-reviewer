@@ -48,3 +48,4 @@ Local sign-out revokes the session but now retains an opaque, HTTP-only workspac
 
 Loopback page navigation redirects to APP_ORIGIN so localhost and 127.0.0.1 do not silently select separate cookie stores. Clearing browser data still removes the local workspace association; it does not erase server-side records. Existing records were preserved during this change, with no automatic merging of workspaces.
 <!-- Capture a cleanup item for implementation documentation -->
+<!-- Clarify implementation notes for implementation documentation -->
