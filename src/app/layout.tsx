@@ -20,3 +20,4 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 // Align local documentation for layout module
+// Review follow-up details for layout module
