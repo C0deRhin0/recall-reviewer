@@ -34,3 +34,4 @@ export default function Modal({
   );
 }
 // Refine the surrounding context for modal module
+// Align local documentation for modal module
