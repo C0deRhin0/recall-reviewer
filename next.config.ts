@@ -65,3 +65,4 @@ const config: NextConfig = {
 };
 export default config;
 // Document the next adjustment for next config module
+// Capture a cleanup item for next config module
