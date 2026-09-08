@@ -250,3 +250,4 @@ export default function Auth({
   );
 }
 // Align local documentation for auth module
+// Review follow-up details for auth module
