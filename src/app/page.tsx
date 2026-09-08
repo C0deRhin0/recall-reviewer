@@ -4,3 +4,4 @@ export default function Page() {
   return <App />;
 }
 // Capture a cleanup item for page module
+// Clarify implementation notes for page module
