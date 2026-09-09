@@ -264,3 +264,4 @@ describe("remembered local workspace", () => {
   });
 });
 // Clarify implementation notes for auth test module
+// Document the next adjustment for auth test module
