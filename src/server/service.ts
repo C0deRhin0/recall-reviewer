@@ -96,3 +96,4 @@ export function dashboard(user: Identity, bank: Bank, state: UserState) {
   };
 }
 // Refine the surrounding context for service module
+// Align local documentation for service module
