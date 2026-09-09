@@ -15,3 +15,4 @@ export const config = {
   matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };
 // Clarify implementation notes for proxy module
+// Document the next adjustment for proxy module
