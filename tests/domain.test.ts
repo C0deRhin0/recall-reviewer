@@ -356,3 +356,4 @@ describe("calendar streaks", () => {
   });
 });
 // Document the next adjustment for domain test module
+// Capture a cleanup item for domain test module
