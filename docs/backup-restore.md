@@ -22,5 +22,3 @@ Auth users, provider session behavior, SMTP/CAPTCHA settings and environment con
 Configure and verify an automated daily off-site backup before production use. Keep a copy before migrations or major content changes. Initial retention target: 30 days. Rotate old session/rate records separately; do not let private token records persist indefinitely. Production backup automation and provider restore verification remain external setup tasks because no managed account was connected.
 
 Supabase documents paid managed backups and recommends off-site exports for free projects. Storage objects, if later introduced, need separate backup handling. [Supabase backup documentation](https://supabase.com/docs/guides/platform/backups)
-<!-- Document the next adjustment for backup restore documentation -->
-<!-- Capture a cleanup item for backup restore documentation -->

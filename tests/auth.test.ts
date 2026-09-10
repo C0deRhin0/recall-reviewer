@@ -263,5 +263,3 @@ describe("remembered local workspace", () => {
     expect(mocked.records.size).toBe(0);
   });
 });
-// Clarify implementation notes for auth test module
-// Document the next adjustment for auth test module

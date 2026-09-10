@@ -57,5 +57,3 @@ export function date(value: string) {
     day: "numeric",
   });
 }
-// Capture a cleanup item for client module
-// Clarify implementation notes for client module

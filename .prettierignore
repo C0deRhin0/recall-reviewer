@@ -9,6 +9,3 @@ playwright-report
 coverage
 package-lock.json
 .env*
-
-
-

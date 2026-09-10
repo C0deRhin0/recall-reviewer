@@ -225,5 +225,3 @@ export async function rateLimit(key: string, limit: number, windowMs: number) {
   if (!allowed)
     throw new Error("Too many requests. Wait a few minutes and try again.");
 }
-// Align local documentation for auth module
-// Review follow-up details for auth module

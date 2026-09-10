@@ -58,5 +58,3 @@ export default function StudyIcon({ name }: { name: keyof typeof paths }) {
     </svg>
   );
 }
-// Align local documentation for studyicon module
-// Review follow-up details for studyicon module

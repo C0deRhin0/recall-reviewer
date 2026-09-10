@@ -35,5 +35,3 @@ An older published release can be activated to roll back. Attempts retain comple
 Maximum input: 2 MiB and 1,000 questions per batch. Duplicate IDs/prompts, missing explanations, invalid correct choices, unknown categories, duplicate options and common position-dependent choices are rejected. The complete resulting bank must also remain within storage limits described in architecture.md.
 
 The importer checks structure, not truth. Review factual correctness and the objective mapping before publication. Original source material stays in ignored `private/` or an external private content store. OCR/native XLSX parsing and automatic explanation generation are not part of this implementation.
-<!-- Review follow-up details for content authoring documentation -->
-<!-- Refine the surrounding context for content authoring documentation -->

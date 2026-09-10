@@ -355,5 +355,3 @@ describe("calendar streaks", () => {
     expect(streak(s, new Date("2026-03-09T03:30:00Z")).current).toBe(2);
   });
 });
-// Document the next adjustment for domain test module
-// Capture a cleanup item for domain test module

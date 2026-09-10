@@ -249,5 +249,3 @@ export default function Auth({
     </main>
   );
 }
-// Align local documentation for auth module
-// Review follow-up details for auth module

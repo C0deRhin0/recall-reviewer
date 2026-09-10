@@ -198,5 +198,3 @@ it("a managed read outage fails instead of replacing progress with defaults", as
   mocks.createClient.mockImplementation(rpc);
   expect((await store.read<UserState>("user:test"))!.value).toEqual(original);
 }, 20000);
-// Clarify implementation notes for persistence test module
-// Document the next adjustment for persistence test module

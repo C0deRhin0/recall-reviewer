@@ -36,5 +36,3 @@ it("PostgreSQL denies browser roles, protects private tables, and atomically rej
   ).rejects.toThrow(/permission denied/);
   await db.close();
 }, 20000);
-// Refine the surrounding context for database test module
-// Align local documentation for database test module

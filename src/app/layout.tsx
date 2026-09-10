@@ -19,5 +19,3 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     </html>
   );
 }
-// Align local documentation for layout module
-// Review follow-up details for layout module

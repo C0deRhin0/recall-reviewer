@@ -76,5 +76,3 @@ it("restores an encrypted archive into a fresh directory and excludes session cr
     await rm(root, { recursive: true, force: true });
   }
 });
-// Align local documentation for backup test module
-// Review follow-up details for backup test module
