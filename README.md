@@ -73,3 +73,4 @@ Publish this directory as its own repository. Review the staged file list before
 The project has not been initialized as a Git repository. No commits, pushes or deployment connections have been created.
 <!-- Document the next adjustment for project documentation -->
 <!-- Capture a cleanup item for project documentation -->
+<!-- Clarify implementation notes for project documentation -->
