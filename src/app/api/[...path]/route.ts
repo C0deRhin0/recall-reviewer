@@ -562,7 +562,11 @@ async function handle(
           expireAttempts(state);
           const attempt = state.attempts.find((a) => a.id === id);
           if (!attempt) throw fail("Session not found.", 404);
-          return publicAttempt(attempt);
+          const result = publicAttempt(attempt);
+          if (!attempt.completedAt && attempt.releaseId !== bank.activeId)
+            result.notice =
+              "This saved session uses a retired question revision. Return to the study desk and start a new session to use the current bank.";
+          return result;
         });
         return reply(a);
       }

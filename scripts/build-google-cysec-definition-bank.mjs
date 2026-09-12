@@ -512,6 +512,30 @@ const conceptContext = (term, definition, category) => {
         "Monitor is the final NIST Risk Management Framework step. It continuously tracks controls, changes, threats, and system status so the organization can reassess risk and update its authorization decisions.",
       eli5: "It means keeping watch after protections are in place, because systems and risks can change over time.",
     };
+  if (/structured query language|\bsql\b/.test(text) && !/injection/.test(text))
+    return {
+      technical:
+        "SQL is used to define, retrieve, and modify structured data in relational databases. It is a query language, whereas an IDE is a coding workspace, Python is a general-purpose programming language, and HTML describes web-page structure.",
+      eli5: "SQL is the language used to ask a database for information or tell it how to organize information.",
+    };
+  if (/endpoint detection and response|\bedr\b/.test(text))
+    return {
+      technical:
+        "EDR collects endpoint telemetry and helps analysts detect, investigate, and respond to activity on devices such as workstations and servers. A SIEM centralizes data across many sources, while EDR focuses on endpoint behavior.",
+      eli5: "It is security software that watches individual computers and helps the team investigate and respond when one looks suspicious.",
+    };
+  if (/log analysis/.test(text))
+    return {
+      technical:
+        "Log analysis examines recorded system and application events to identify patterns, errors, or indicators of malicious activity. Logging creates those records; analysis interprets them to support detection and investigation.",
+      eli5: "It means reading the computer's activity diary to find clues about what happened.",
+    };
+  if (/phish|vishing|smishing|angler phishing/.test(text))
+    return {
+      technical:
+        "This is a social-engineering technique that relies on deception rather than a direct technical exploit. Verify unexpected requests using a trusted channel and report suspected attempts so the organization can block or investigate them.",
+      eli5: "It is a trick that tries to make someone trust a fake message, call, or service request.",
+    };
   if (/incident response/.test(text))
     return {
       technical:
@@ -1074,7 +1098,7 @@ const release = {
   schema_version: 1,
   exam_code: "COMPTIA-SECURITY-PLUS",
   edition: "SY0-701-v7",
-  release_label: "Google CySec → Security+ V7 definitions.8",
+  release_label: "Google CySec → Security+ V7 definitions.9",
   categories,
   questions,
 };
