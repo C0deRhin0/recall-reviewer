@@ -15,6 +15,97 @@
   --sans: "IBM Plex Sans", sans-serif;
   color-scheme: dark;
 }
+html.light-theme {
+  --bg: #f6f5f1;
+  --surface: #ffffff;
+  --surface-2: #f0f1ef;
+  --surface-3: #e5e7e4;
+  --text: #1d2529;
+  --muted: #59646b;
+  --dim: #727d84;
+  --line: #c9d0d2;
+  --amber: #a85f09;
+  --amber-ink: #ffffff;
+  --green: #23683e;
+  --red: #ae3731;
+  color-scheme: light;
+}
+html.light-theme input,
+html.light-theme select,
+html.light-theme textarea {
+  border-color: #aeb8bc;
+  background: #fff;
+}
+html.light-theme label {
+  color: #303a3f;
+}
+html.light-theme .button.secondary {
+  border-color: #9ca8ad;
+}
+html.light-theme .notice {
+  background: #fff5e5;
+  color: #66420e;
+}
+html.light-theme .notice.error {
+  background: #fff0ee;
+  color: #842823;
+}
+html.light-theme .sidebar,
+html.light-theme .session-rail,
+html.light-theme .modal-backdrop {
+  border-color: var(--line);
+}
+html.light-theme .auth-story,
+html.light-theme .focus-panel,
+html.light-theme .daily-panel,
+html.light-theme .settings-panel,
+html.light-theme .bank-summary,
+html.light-theme .question-reading .choice,
+html.light-theme .inline-reasoning,
+html.light-theme .inline-reveal {
+  background: var(--surface);
+  border-color: var(--line);
+}
+html.light-theme .focus-bottom,
+html.light-theme .auth-story {
+  border-color: var(--line);
+}
+html.light-theme .focus-meta,
+html.light-theme .inline-reasoning > p {
+  color: var(--text);
+}
+html.light-theme .question-reading .choice.selected {
+  background: #fff4e5;
+}
+html.light-theme .question-reading .choice.correct {
+  background: #eaf6ed;
+  border-color: #7fa98a;
+}
+html.light-theme .question-reading .choice.incorrect {
+  background: #fff0ee;
+  border-color: #cf8c86;
+}
+html.light-theme .reasoning-switch,
+html.light-theme .question-map button.answered {
+  background: var(--surface-2);
+  color: var(--text);
+}
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.theme-toggle:hover {
+  color: var(--text);
+  border-color: var(--muted);
+}
 * {
   box-sizing: border-box;
 }

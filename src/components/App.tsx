@@ -35,10 +35,22 @@ export default function App({
     [loadingMessage, setLoadingMessage] = useState("Opening your study desk…"),
     [error, setError] = useState(""),
     [signingOutBusy, setSigningOutBusy] = useState(false),
+    [lightTheme, setLightTheme] = useState(false),
     [view, setView] = useState<View>("dashboard"),
     [attempt, setAttempt] = useState(""),
     [preset, setPreset] = useState({ mode: "mixed", category: "" });
   const signingOut = useRef(false);
+  useEffect(() => {
+    const enabled = window.localStorage.getItem("recall-theme") === "light";
+    setLightTheme(enabled);
+    document.documentElement.classList.toggle("light-theme", enabled);
+  }, []);
+  function toggleTheme() {
+    const next = !lightTheme;
+    setLightTheme(next);
+    document.documentElement.classList.toggle("light-theme", next);
+    window.localStorage.setItem("recall-theme", next ? "light" : "dark");
+  }
   useEffect(() => {
     setCsrf(data?.user.csrf || "");
   }, [data?.user.csrf]);
@@ -182,6 +194,15 @@ export default function App({
           </button>
         </nav>
         <div className="sidebar-bottom">
+          <button
+            className="theme-toggle"
+            type="button"
+            aria-pressed={lightTheme}
+            onClick={toggleTheme}
+          >
+            <span aria-hidden="true">{lightTheme ? "☀" : "◐"}</span>
+            {lightTheme ? "Light mode" : "Dark mode"}
+          </button>
           <button
             className={"nav-item " + (view === "settings" ? "active" : "")}
             onClick={() => go("settings")}
