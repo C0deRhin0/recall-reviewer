@@ -322,7 +322,12 @@ export default function App({
           )}
           {view === "bank" && <Bank dashboard={data} refresh={refresh} />}
           {view === "settings" && (
-            <Settings dashboard={data} refresh={refresh} />
+            <Settings
+              dashboard={data}
+              refresh={refresh}
+              lightTheme={lightTheme}
+              toggleTheme={toggleTheme}
+            />
           )}
         </main>
       </div>

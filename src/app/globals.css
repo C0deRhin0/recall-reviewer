@@ -106,6 +106,20 @@ html.light-theme .question-map button.answered {
   color: var(--text);
   border-color: var(--muted);
 }
+.appearance-setting {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 16px 0;
+  border-top: 1px solid var(--line);
+}
+.appearance-setting strong {
+  font-size: 14px;
+}
+.appearance-setting .fine-print {
+  margin-top: 3px;
+}
 * {
   box-sizing: border-box;
 }

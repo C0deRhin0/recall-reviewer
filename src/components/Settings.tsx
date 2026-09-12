@@ -5,9 +5,13 @@ import { api, download, type Dashboard } from "./client";
 export default function Settings({
   dashboard,
   refresh,
+  lightTheme,
+  toggleTheme,
 }: {
   dashboard: Dashboard;
   refresh: () => Promise<Dashboard>;
+  lightTheme: boolean;
+  toggleTheme: () => void;
 }) {
   const [profile, setProfile] = useState(dashboard.profile),
     [busy, setBusy] = useState(false),
@@ -146,6 +150,22 @@ export default function Settings({
               <option value="after-session">Wait until the session ends</option>
             </select>
           </label>
+          <div className="appearance-setting">
+            <div>
+              <strong>Appearance</strong>
+              <p className="fine-print">
+                Use a brighter workspace with the light theme.
+              </p>
+            </div>
+            <button
+              type="button"
+              className="button secondary"
+              aria-pressed={lightTheme}
+              onClick={toggleTheme}
+            >
+              {lightTheme ? "Use dark mode" : "Use light mode"}
+            </button>
+          </div>
           <button className="button primary" disabled={busy}>
             {busy ? "Saving…" : "Save preferences"} →
           </button>
