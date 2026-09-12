@@ -2511,11 +2511,8 @@ html.light-theme .topbar,
 html.light-theme .session-header,
 html.light-theme .question-toolbar,
 html.light-theme .session-rail,
-html.light-theme .auth-story,
 html.light-theme .focus-panel,
 html.light-theme .daily-panel,
-html.light-theme .settings-panel,
-html.light-theme .bank-summary,
 html.light-theme .modal,
 html.light-theme .import-preview,
 html.light-theme .preview-question,
@@ -2527,6 +2524,27 @@ html.light-theme .inline-reveal {
 }
 html.light-theme .sidebar {
   background: var(--surface-2);
+}
+/* These wrappers are intentionally flat in the product layout. Keep their
+   divider-based structure in both themes instead of turning them into cards. */
+html.light-theme .settings-panel {
+  background: transparent;
+  border: 0;
+  border-top: 1px solid var(--line);
+  border-radius: 0;
+  padding: 20px 0;
+}
+html.light-theme .bank-summary {
+  background: transparent;
+  border: 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  padding: 14px 0;
+}
+html.light-theme .auth-story {
+  background: transparent;
+  border: 0;
 }
 html.light-theme .nav-item.active,
 html.light-theme .mode-option.chosen,
@@ -2555,7 +2573,6 @@ html.light-theme .map-empty-dot {
   border-color: var(--line);
 }
 html.light-theme .focus-bottom,
-html.light-theme .auth-story,
 html.light-theme .focus-panel,
 html.light-theme .daily-panel,
 html.light-theme .empty-state,
