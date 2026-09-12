@@ -2503,6 +2503,86 @@ fieldset {
 .modal-backdrop::backdrop {
   background: #0008;
 }
+
+/* Light theme: every surface uses an explicit light value so dark component
+   colors never bleed through from a more specific component rule. */
+html.light-theme .sidebar,
+html.light-theme .topbar,
+html.light-theme .session-header,
+html.light-theme .question-toolbar,
+html.light-theme .session-rail,
+html.light-theme .auth-story,
+html.light-theme .focus-panel,
+html.light-theme .daily-panel,
+html.light-theme .settings-panel,
+html.light-theme .bank-summary,
+html.light-theme .modal,
+html.light-theme .import-preview,
+html.light-theme .preview-question,
+html.light-theme .question-reading .choice,
+html.light-theme .inline-reasoning,
+html.light-theme .inline-reveal {
+  background: var(--surface);
+  border-color: var(--line);
+}
+html.light-theme .sidebar {
+  background: var(--surface-2);
+}
+html.light-theme .nav-item.active,
+html.light-theme .mode-option.chosen,
+html.light-theme .choice.selected,
+html.light-theme .question-reading .choice.selected {
+  background: #fff3df;
+}
+html.light-theme .choice.correct,
+html.light-theme .question-reading .choice.correct {
+  background: #eaf6ed;
+  border-color: #7fa98a;
+}
+html.light-theme .choice.incorrect,
+html.light-theme .question-reading .choice.incorrect {
+  background: #fff0ee;
+  border-color: #cf8c86;
+}
+html.light-theme .choice-letter,
+html.light-theme .question-reading .choice-letter,
+html.light-theme .reasoning-switch,
+html.light-theme .question-map button.answered,
+html.light-theme .session-map button.answered,
+html.light-theme .map-empty-dot {
+  background: var(--surface-3);
+  color: var(--text);
+  border-color: var(--line);
+}
+html.light-theme .focus-bottom,
+html.light-theme .auth-story,
+html.light-theme .focus-panel,
+html.light-theme .daily-panel,
+html.light-theme .empty-state,
+html.light-theme .question-map button,
+html.light-theme .session-map button,
+html.light-theme .inline-reasoning,
+html.light-theme .inline-reveal {
+  border-color: var(--line);
+}
+html.light-theme .focus-meta,
+html.light-theme .inline-reasoning > p,
+html.light-theme .question-reading .choice-text,
+html.light-theme .correct-answer-reference,
+html.light-theme .question-map button.answered,
+html.light-theme .session-map button.answered {
+  color: var(--text);
+}
+html.light-theme .global-error {
+  background: #fff0ee;
+  color: #842823;
+}
+html.light-theme .modal-backdrop {
+  background: rgb(33 42 45 / 28%);
+}
+html.light-theme .modal-backdrop::backdrop {
+  background: rgb(33 42 45 / 28%);
+}
 @media (max-width: 700px) {
   .mobile-settings {
     display: block;
