@@ -45,6 +45,10 @@ import {
 } from "@/domain/content";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+const retiredQualityReleases = new Set([
+  "Google CySec → Security+ V7 definitions.6",
+  "Google CySec → Security+ V7 definitions.7",
+]);
 const reply = (data: unknown, status = 200) =>
   NextResponse.json(data, {
     status,
@@ -563,9 +567,12 @@ async function handle(
           const attempt = state.attempts.find((a) => a.id === id);
           if (!attempt) throw fail("Session not found.", 404);
           const result = publicAttempt(attempt);
-          if (!attempt.completedAt && attempt.releaseId !== bank.activeId)
+          if (
+            !attempt.completedAt &&
+            retiredQualityReleases.has(attempt.releaseLabel)
+          )
             result.notice =
-              "This saved session uses a retired question revision. Return to the study desk and start a new session to use the current bank.";
+              "This saved session uses a retired question revision with superseded questions. Set up a new session to use the corrected bank.";
           return result;
         });
         return reply(a);

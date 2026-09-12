@@ -445,6 +445,33 @@ export default function Practice({
         </div>
       </>
     );
+  if (
+    !attempt.completedAt &&
+    attempt.notice.startsWith(
+      "This saved session uses a retired question revision with superseded questions.",
+    )
+  )
+    return (
+      <section className="empty-state" aria-live="polite">
+        <h1>Question bank updated</h1>
+        <p>
+          This saved session contains questions removed during a quality
+          correction. Set up a new session to practice with the corrected bank.
+        </p>
+        <button
+          className="button primary"
+          onClick={() =>
+            run(async () => {
+              setAttempt(null);
+              onAttempt("");
+              await refresh();
+            })
+          }
+        >
+          Set up a new session <StudyIcon name="next" />
+        </button>
+      </section>
+    );
   if (!item) return <div role="status">Loading your question…</div>;
   const total = attempt.items.length;
   const answered = attempt.items.filter((q) => q.selectedId).length;
