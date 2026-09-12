@@ -273,7 +273,21 @@ const excludedSourceQuestions = new Set([
   "term-0980",
   "term-0981",
   "term-0985",
+  "term-0229",
+  "term-0716",
+  "term-0801",
+  "term-0828",
+  "term-0512",
 ]);
+
+const finalChoiceOverrides = {
+  "term-0659": [
+    "Display Filters",
+    "Capture Filters",
+    "Packet Header",
+    "Network Protocol",
+  ],
+};
 
 const removeMarkdownLinks = (value) =>
   value
@@ -527,9 +541,146 @@ const conceptContext = (term, definition, category) => {
   };
 };
 
-const seenDefinitions = new Set();
+const stopWords = new Set(
+  "a an and are as at be by for from how in into is it its of on or that the their these this to used with within who which security business organization organizations company companies data information system systems technology".split(
+    " ",
+  ),
+);
+const terms = (value) =>
+  new Set(
+    value
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, " ")
+      .split(" ")
+      .filter((word) => word.length > 2 && !stopWords.has(word)),
+  );
+const incompleteTail =
+  /\b(and|or|the|a|an|to|of|for|with|from|in|on|at|by|that|which|their|its|access|data|information|security|system|network|application|activity|behavior|analysis|monitoring|management)\.?$/i;
+const badAnswer =
+  /^(note|some of|this |these |there |it |the web consists|an ipv4 packet consists|the key difference|introduction to|stage \d|data layer|baseline|coordination$|constant vigilance|automate |join |keep |define |identify |process of |owner types|prompt$|benefits of|categories and|common protocols|access to|definition and|examples for|monitoring,|fix |improve |protect$|chief |cs[oif]|main dashboard|resource management|api connections|eve\.json)/i;
+const badDefinition =
+  /^(there are multiple|these are essential|the nist cybersecurity framework provides|the web consists|the header \(|the core, tiers|assets, threats|policies, standards|network access, internet|the surface web|[a-z]+ \([^)]*\) and)/i;
+const domainFor = (answer, prompt) => {
+  const text = `${answer} ${prompt}`.toLowerCase();
+  if (
+    /pii|privacy|personal data|health information|phi|sensitive data/.test(text)
+  )
+    return "privacy";
+  if (
+    /encrypt|cipher|hash|certificate|key pair|signature|cryptograph/.test(text)
+  )
+    return "cryptography";
+  if (
+    /network|router|protocol|ip address|firewall|dns|tcp|udp|wi-fi|packet|port|subnet|proxy/.test(
+      text,
+    )
+  )
+    return "networking";
+  if (/cloud|virtual machine|hypervisor|container|saas|paas|iaas/.test(text))
+    return "cloud";
+  if (
+    /python|sql|code|programming|linux|command|file system|operating system|hardware/.test(
+      text,
+    )
+  )
+    return "computing";
+  if (
+    /incident|forensic|evidence|log|siem|alert|monitor|splunk|chronicle|detection/.test(
+      text,
+    )
+  )
+    return "operations";
+  if (
+    /attack|malware|phish|threat actor|exploit|vulnerab|ransomware|social engineering/.test(
+      text,
+    )
+  )
+    return "threats";
+  if (/risk|audit|compliance|policy|govern|regulat|framework/.test(text))
+    return "governance";
+  return "general";
+};
+const familyFor = (answer, prompt) => {
+  const text = `${answer} ${prompt}`.toLowerCase();
+  const label = answer.toLowerCase();
+  if (
+    /financial|brand|reputation|productivity|business continuity|downtime/.test(
+      label,
+    )
+  )
+    return "business-impact";
+  if (
+    /communication|problem-solving|time management|growth mindset|perspective|transferable skill/.test(
+      label,
+    )
+  )
+    return "professional-skills";
+  if (
+    /phish|vishing|smishing|baiting|pretext|social engineering|whaling|watering hole/.test(
+      label,
+    )
+  )
+    return "social-engineering";
+  if (/malware|virus|worm|ransomware|trojan|rootkit|spyware/.test(label))
+    return "malware";
+  if (
+    /pii|privacy|personal data|health information|phi|sensitive data/.test(
+      label,
+    )
+  )
+    return "privacy";
+  if (
+    /encrypt|cipher|hash|certificate|key pair|signature|cryptograph/.test(label)
+  )
+    return "cryptography";
+  if (
+    /network|router|protocol|ip address|firewall|dns|tcp|udp|wi-fi|packet|port|subnet|proxy/.test(
+      label,
+    )
+  )
+    return "networking";
+  if (/cloud|virtual machine|hypervisor|container|saas|paas|iaas/.test(label))
+    return "cloud";
+  if (
+    /python|sql|code|programming|linux|command|file system|operating system|hardware/.test(
+      label,
+    )
+  )
+    return "computing";
+  if (
+    /incident|forensic|evidence|log|siem|alert|monitor|splunk|chronicle|detection/.test(
+      label,
+    )
+  )
+    return "operations";
+  if (
+    /attack|threat actor|exploit|vulnerab|denial of service|injection|xss/.test(
+      label,
+    )
+  )
+    return "attacks";
+  if (
+    /authentication|authorization|access control|identity|account|least privilege|mfa|biometric/.test(
+      label,
+    )
+  )
+    return "identity";
+  if (
+    /risk|audit|compliance|policy|govern|regulat|framework|control/.test(label)
+  )
+    return "governance";
+  if (
+    /cybersecurity|availability|confidentiality|integrity|security posture|asset|security architecture/.test(
+      label,
+    )
+  )
+    return "security-foundations";
+  return "general";
+};
+
 let removedLowQualityDefinitions = 0;
-const questions = baseline.questions.flatMap((question) => {
+const seenDefinitions = new Set();
+const candidates = baseline.questions.flatMap((question) => {
   if (excludedSourceQuestions.has(question.external_id)) {
     removedLowQualityDefinitions++;
     return [];
@@ -537,8 +688,6 @@ const questions = baseline.questions.flatMap((question) => {
   const definition = removeMarkdownLinks(
     promptOverrides[question.external_id] || definitionFrom(question.prompt),
   );
-  if (!definition || seenDefinitions.has(definition.toLowerCase())) return [];
-  seenDefinitions.add(definition.toLowerCase());
   const sourceChoices = choiceOverrides[question.external_id]
     ? question.choices.map((choice, index) => ({
         ...choice,
@@ -549,34 +698,107 @@ const questions = baseline.questions.flatMap((question) => {
     sourceChoices.find((choice) => choice.id === question.correct_choice_id)
       .text,
   );
-  const choices = sourceChoices.map((choice) => ({
-    ...choice,
-    text: clean(choice.text),
-  }));
   const prompt = concealAnswer(definition, answer);
-  if (!prompt || prompt.length < 24) {
+  const duplicate = seenDefinitions.has(prompt.toLowerCase());
+  const incomplete =
+    !prompt ||
+    prompt.length < 35 ||
+    incompleteTail.test(prompt) ||
+    badDefinition.test(prompt) ||
+    badAnswer.test(answer) ||
+    answer.length > 100 ||
+    answer.split(/\s+/).length > 9;
+  if (duplicate || incomplete) {
     removedLowQualityDefinitions++;
     return [];
   }
-  if (new RegExp(escapeRegex(answer), "i").test(prompt))
-    throw new Error(`Definition prompt leaks its answer: ${answer}`);
-  const category = categoryFor(answer, definition, question.category_slug);
-  const context = conceptContext(answer, definition, category);
-  const explanation = explanationFor(answer, definition, context);
+  seenDefinitions.add(prompt.toLowerCase());
+  const category = categoryFor(answer, prompt, question.category_slug);
   return [
     {
-      ...question,
-      external_id: "definition-" + question.external_id,
-      category_slug: category,
-      objective_code: objectiveFor[category],
-      prompt,
+      question,
+      answer,
+      prompt: sentence(prompt),
+      category,
+      domain: domainFor(answer, prompt),
+      family: familyFor(answer, prompt),
+    },
+  ];
+});
+
+const choiceSet = (candidate) => {
+  const override = finalChoiceOverrides[candidate.question.external_id];
+  if (override)
+    return override.map((text, index) => ({
+      id: ["a", "b", "c", "d"][index],
+      text,
+    }));
+  const subject = terms(`${candidate.answer} ${candidate.prompt}`);
+  const score = (other) => {
+    const overlap = [...terms(`${other.answer} ${other.prompt}`)].filter(
+      (word) => subject.has(word),
+    ).length;
+    const abbreviation = /\([A-Z]{2,}\)|\b[A-Z]{2,}\b/.test(other.answer);
+    return overlap * 100 + (abbreviation ? 1 : 0);
+  };
+  const related = candidates
+    .filter(
+      (other) =>
+        other !== candidate &&
+        other.family === candidate.family &&
+        candidate.family !== "general" &&
+        score(other) > 0,
+    )
+    .sort((a, b) => score(b) - score(a) || a.answer.localeCompare(b.answer));
+  const fallback = candidates
+    .filter(
+      (other) =>
+        other !== candidate &&
+        !related.includes(other) &&
+        other.domain === candidate.domain &&
+        candidate.domain !== "general" &&
+        score(other) > 0,
+    )
+    .sort((a, b) => score(b) - score(a) || a.answer.localeCompare(b.answer));
+  const choices = [candidate, ...related, ...fallback].slice(0, 4);
+  if (choices.length !== 4) return null;
+  return choices.map((item, index) => ({
+    id: ["a", "b", "c", "d"][index],
+    text: item.answer,
+  }));
+};
+
+const questions = candidates.flatMap((candidate) => {
+  const choices = choiceSet(candidate);
+  if (!choices) {
+    removedLowQualityDefinitions++;
+    return [];
+  }
+  const context = conceptContext(
+    candidate.answer,
+    candidate.prompt,
+    candidate.category,
+  );
+  const explanation = explanationFor(
+    candidate.answer,
+    candidate.prompt,
+    context,
+  );
+  return [
+    {
+      ...candidate.question,
+      external_id: "definition-" + candidate.question.external_id,
+      category_slug: candidate.category,
+      objective_code: objectiveFor[candidate.category],
+      prompt: `Which term best matches this definition?\n\n${candidate.prompt}`,
       choices,
+      correct_choice_id: "a",
       explanation_technical: explanation.technical,
       explanation_eli5: explanation.eli5,
       tags: ["definition", "google-cysec", "definition-bank"],
       source_reference: "Google Cybersecurity Certificate definition bank.",
       change_note:
-        "Definition-bank rewrite: direct definition prompt and expanded rationale.",
+        "Editorial definition item with context-matched answer options and rationale.",
     },
   ];
 });
@@ -585,7 +807,7 @@ const release = {
   schema_version: 1,
   exam_code: "COMPTIA-SECURITY-PLUS",
   edition: "SY0-701-v7",
-  release_label: "Google CySec → Security+ V7 definitions.6",
+  release_label: "Google CySec → Security+ V7 definitions.7",
   categories,
   questions,
 };
