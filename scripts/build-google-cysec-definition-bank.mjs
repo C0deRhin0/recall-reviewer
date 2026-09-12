@@ -176,6 +176,10 @@ const promptOverrides = {
     "A web-based directory that organizes open-source intelligence tools by source type and platform.",
   "term-0527":
     "A service that lets people check whether an email address or account appears in known data breaches.",
+  "term-0968":
+    "The person or organization that determines why and how personal data is processed.",
+  "term-0971":
+    "A documented plan for restoring systems and operations after a disruptive incident.",
 };
 
 const choiceOverrides = {
@@ -281,6 +285,126 @@ const excludedSourceQuestions = new Set([
 ]);
 
 const finalChoiceOverrides = {
+  "term-0021": [
+    "Personally identifiable information (PII)",
+    "Protected health information (PHI)",
+    "Nonpublic personal information (NPI)",
+    "Sensitive personal data",
+  ],
+  "term-0026": [
+    "Threat actor",
+    "Vulnerability",
+    "Exploit",
+    "Attack vector",
+  ],
+  "term-0088": [
+    "Compliance",
+    "Security audit",
+    "Security control",
+    "Risk acceptance",
+  ],
+  "term-0096": [
+    "Security controls",
+    "Security audit",
+    "Risk assessment",
+    "Business continuity plan",
+  ],
+  "term-0120": [
+    "SQL (Structured Query Language)",
+    "Python",
+    "Bash",
+    "HTML",
+  ],
+  "term-0119": [
+    "Security information and event management (SIEM)",
+    "Intrusion detection system (IDS)",
+    "Security orchestration, automation, and response (SOAR)",
+    "Endpoint detection and response (EDR)",
+  ],
+  "term-0162": [
+    "Monitor",
+    "Categorize",
+    "Select",
+    "Authorize",
+  ],
+  "term-0198": [
+    "Security audit",
+    "Risk assessment",
+    "Penetration test",
+    "Security control",
+  ],
+  "term-0409": [
+    "Digital forensics",
+    "Log analysis",
+    "Chain of custody",
+    "Incident response plan",
+  ],
+  "term-0453": [
+    "Root directory",
+    "Home directory",
+    "Current working directory",
+    "Parent directory",
+  ],
+  "term-0559": [
+    "Asset inventory",
+    "Configuration management database (CMDB)",
+    "Vulnerability scan",
+    "Data classification scheme",
+  ],
+  "term-0563": [
+    "Attack tree",
+    "Attack vector",
+    "Threat model",
+    "Data flow diagram",
+  ],
+  "term-0564": [
+    "Attack vector",
+    "Attack tree",
+    "Threat model",
+    "Security control",
+  ],
+  "term-0589": [
+    "Input validation",
+    "Output encoding",
+    "Error handling",
+    "Unit testing",
+  ],
+  "term-0613": [
+    "SQL injection",
+    "Cross-site scripting (XSS)",
+    "Command injection",
+    "LDAP injection",
+  ],
+  "term-0692": [
+    "Eradication",
+    "Containment",
+    "Recovery",
+    "Preparation",
+  ],
+  "term-0764": [
+    "Incident response plan",
+    "Disaster recovery plan",
+    "Business continuity plan",
+    "Security policy",
+  ],
+  "term-0743": [
+    "Suricata",
+    "Wireshark",
+    "tcpdump",
+    "Security information and event management (SIEM)",
+  ],
+  "term-0968": [
+    "Data controller",
+    "Data processor",
+    "Data subject",
+    "Data protection officer",
+  ],
+  "term-0903": [
+    "Syntax error",
+    "Logic error",
+    "Runtime error",
+    "Exception",
+  ],
   "term-0659": [
     "Display Filters",
     "Capture Filters",
@@ -376,6 +500,18 @@ const objectiveFor = {
 
 const conceptContext = (term, definition, category) => {
   const text = (term + " " + definition).toLowerCase();
+  if (/security information and event management|\bsiem\b/.test(text))
+    return {
+      technical:
+        "A SIEM centralizes and correlates logs from many sources so analysts can search activity, apply detection rules, and investigate alerts. An IDS primarily detects suspicious traffic, while SOAR coordinates response workflows and EDR focuses on endpoints.",
+      eli5: "It is a central security dashboard that gathers clues from many systems so analysts can spot and investigate trouble.",
+    };
+  if (/nist rmf/.test(text) && /\bmonitor\b/.test(text))
+    return {
+      technical:
+        "Monitor is the final NIST Risk Management Framework step. It continuously tracks controls, changes, threats, and system status so the organization can reassess risk and update its authorization decisions.",
+      eli5: "It means keeping watch after protections are in place, because systems and risks can change over time.",
+    };
   if (/incident response/.test(text))
     return {
       technical:
@@ -554,16 +690,85 @@ const terms = (value) =>
       .split(" ")
       .filter((word) => word.length > 2 && !stopWords.has(word)),
   );
+
+const conceptAliases = [
+  [/security information and event management|\bsiem\b/i, "siem"],
+  [/confidentiality.*integrity.*availability|\bcia\s+triad\b/i, "cia-triad"],
+  [/address resolution protocol|\barp\b/i, "arp"],
+  [/hypertext transfer protocol secure|\bhttps\b/i, "https"],
+  [/domain name system|\bdns\b/i, "dns"],
+  [/synchroni[sz]e.*flood|\bsyn\s+flood/i, "syn-flood"],
+  [/structured query language|\bsql\s+for\s+structured data/i, "sql-query-language"],
+  [/^(?:computer )?virus$/i, "virus"],
+];
+
+const genericConceptWords = new Set(
+  "a an and as at by for from in into of on or the to with tool tools analysis example examples function functions method methods task tasks part parts step steps activity activities concept concepts category categories benefit benefits process processes approach approaches system systems security information management data use using guide overview introduction general common basic detailed".split(
+    " ",
+  ),
+);
+
+const conceptKey = (answer) => {
+  const alias = conceptAliases.find(([pattern]) => pattern.test(answer));
+  if (alias) return alias[1];
+  const words = answer
+    .toLowerCase()
+    .replace(/\([^)]*\)/g, " ")
+    .replace(/[^a-z0-9]+/g, " ")
+    .split(" ")
+    .filter((word) => word.length > 1 && !genericConceptWords.has(word));
+  return words.sort().join(" ");
+};
+
+const answerIsAHeadingOrClaim = (answer) => {
+  const value = answer.replace(/\s+/g, " ").trim();
+  const lower = value.toLowerCase();
+  const words = lower.split(" ");
+  return (
+    /^(a|an|the|these|this|there|it)\b/.test(lower) ||
+    /\b(is|are|can|will|would|should|involves|begins|means|includes|consists)\b/.test(
+      lower,
+    ) ||
+    /\b(example|examples|functions?|steps?|parts?|tasks?|activities|benefits?|categories)\b/.test(
+      lower,
+    ) ||
+    /^(correcting|collecting|monitoring|protecting|managing|improving|reducing|increasing|enhanced|reduced)\b/.test(
+      lower,
+    ) ||
+    (words.length === 1 &&
+      /^(analysis|application|data|header|information|logs?|monitoring|network|programming|protocols?|recovery|risk|security|system|tools?)$/.test(
+        lower,
+      ))
+  );
+};
+
+const answerAppearsInPrompt = (answer, prompt) => {
+  const lowerPrompt = prompt.toLowerCase();
+  const alias = conceptAliases.find(([pattern]) => pattern.test(answer));
+  if (alias) {
+    const [pattern] = alias;
+    return pattern.test(prompt);
+  }
+  const key = conceptKey(answer);
+  return (
+    key.length >= 4 &&
+    key
+      .split(" ")
+      .every((word) => lowerPrompt.includes(word))
+  );
+};
 const incompleteTail =
-  /\b(and|or|the|a|an|to|of|for|with|from|in|on|at|by|that|which|their|its|access|data|information|security|system|network|application|activity|behavior|analysis|monitoring|management)\.?$/i;
+  /(?:\b(and|or|the|a|an|to|of|for|with|from|in|on|at|by|that|which|their|its|access|data|information|security|system|network|application|activity|behavior|analysis|monitoring|management|associated|comes|delivered|external|it|lawful|maintain|outline|perform|real-time|runnable|sends|vulnerable|way|log)\.?|;)$/i;
 const badAnswer =
-  /^(note|some of|this |these |there |it |the web consists|an ipv4 packet consists|the key difference|introduction to|stage \d|data layer|baseline|coordination$|constant vigilance|automate |join |keep |define |identify |process of |owner types|prompt$|benefits of|categories and|common protocols|access to|definition and|examples for|monitoring,|fix |improve |protect$|chief |cs[oif]|main dashboard|resource management|api connections|eve\.json)/i;
+  /^(note|some of|this |these |there |it |the web consists|an ipv4 packet consists|the key difference|introduction to|stage \d|data layer|baseline|coordination$|constant vigilance|automate |join |keep |define |identify |process of |owner types|prompt$|benefits of|categories and|common protocols|access to|definition and|examples for|monitoring,|fix |improve |protect$|chief |cs[oif]|main dashboard|resource management|api connections|eve\.json|tcrei framework)/i;
 const badDefinition =
-  /^(there are multiple|these are essential|the nist cybersecurity framework provides|the web consists|the header \(|the core, tiers|assets, threats|policies, standards|network access, internet|the surface web|[a-z]+ \([^)]*\) and)/i;
+  /^(there are multiple|these are essential|the nist cybersecurity framework provides|the web consists|the header \(|the core, tiers|assets, threats|policies, standards|network access, internet|the surface web|[a-z]+ \([^)]*\) and|\)|"|.*\bwhereas\b|.*\be\. ?g\.?)/i;
 const domainFor = (answer, prompt) => {
   const text = `${answer} ${prompt}`.toLowerCase();
   if (
-    /pii|privacy|personal data|health information|phi|sensitive data/.test(text)
+    /\bpii\b|\bphi\b|privacy|personally identifiable|personal data|health information|sensitive data/.test(
+      text,
+    )
   )
     return "privacy";
   if (
@@ -603,6 +808,51 @@ const domainFor = (answer, prompt) => {
 const familyFor = (answer, prompt) => {
   const text = `${answer} ${prompt}`.toLowerCase();
   const label = answer.toLowerCase();
+  if (/command and control|\bc2\b|sql injection|cross-site scripting|\bxss\b/.test(label))
+    return "attacks";
+  if (
+    /incident response|containment|eradication|recovery|post-incident|lessons learned|incident escalation|incident handler|csirt|final report|\bincident\b/.test(
+      label,
+    )
+  )
+    return "incident-response";
+  if (
+    /siem|endpoint detection|\bedr\b|\bdetection\b|log analysis|\blogging\b|yara|suricata|\bevent\b/.test(
+      label,
+    )
+  )
+    return "detection-telemetry";
+  if (/wireshark|tcpdump|packet capture|packet sniff/.test(label))
+    return "network-monitoring";
+  if (
+    /operating system|legacy operating system|hardware|hard drive|random access memory|\bram\b|kernel|graphical user interface|\bgui\b/.test(
+      label,
+    )
+  )
+    return "computing-system";
+  if (
+    /command-line|\bcommand\b|argument|\bnano\b|\boptions\b|root directory|\bsudo\b|standard input|syntax/.test(
+      label,
+    )
+  )
+    return "linux-cli";
+  if (
+    /python|\bsql\b|interpreter|module|library|debugging|iterative statement|return statement|syntax error|input validation|integrated development/.test(
+      label,
+    )
+  )
+    return "programming";
+  if (
+    /oauth|single sign-on|\bsso\b|basic auth|identity and access|\biam\b|authentication|authorization|access control|least privilege/.test(
+      label,
+    )
+  )
+    return "identity";
+  if (/compliance|regulations|security audit|security controls|asset inventory/.test(label))
+    return "governance";
+  if (/data controller/.test(label)) return "privacy";
+  if (/attack tree|attack vector|threat actor|penetration test|\bexploit\b|vulnerability|exposure/.test(label))
+    return "attacks";
   if (
     /financial|brand|reputation|productivity|business continuity|downtime/.test(
       label,
@@ -624,7 +874,7 @@ const familyFor = (answer, prompt) => {
   if (/malware|virus|worm|ransomware|trojan|rootkit|spyware/.test(label))
     return "malware";
   if (
-    /pii|privacy|personal data|health information|phi|sensitive data/.test(
+    /\bpii\b|\bphi\b|privacy|personally identifiable|personal data|health information|sensitive data/.test(
       label,
     )
   )
@@ -680,8 +930,12 @@ const familyFor = (answer, prompt) => {
 
 let removedLowQualityDefinitions = 0;
 const seenDefinitions = new Set();
+const seenConcepts = new Set();
 const candidates = baseline.questions.flatMap((question) => {
-  if (excludedSourceQuestions.has(question.external_id)) {
+  if (
+    excludedSourceQuestions.has(question.external_id) ||
+    !/Glossary of Terms/i.test(question.source_reference)
+  ) {
     removedLowQualityDefinitions++;
     return [];
   }
@@ -699,6 +953,7 @@ const candidates = baseline.questions.flatMap((question) => {
       .text,
   );
   const prompt = concealAnswer(definition, answer);
+  const concept = conceptKey(answer);
   const duplicate = seenDefinitions.has(prompt.toLowerCase());
   const incomplete =
     !prompt ||
@@ -706,14 +961,24 @@ const candidates = baseline.questions.flatMap((question) => {
     incompleteTail.test(prompt) ||
     badDefinition.test(prompt) ||
     badAnswer.test(answer) ||
+    answerIsAHeadingOrClaim(answer) ||
+    answerAppearsInPrompt(answer, prompt) ||
+    !concept ||
+    seenConcepts.has(concept) ||
     answer.length > 100 ||
     answer.split(/\s+/).length > 9;
   if (duplicate || incomplete) {
     removedLowQualityDefinitions++;
     return [];
   }
-  seenDefinitions.add(prompt.toLowerCase());
   const category = categoryFor(answer, prompt, question.category_slug);
+  const family = familyFor(answer, prompt);
+  if (family === "general") {
+    removedLowQualityDefinitions++;
+    return [];
+  }
+  seenDefinitions.add(prompt.toLowerCase());
+  seenConcepts.add(concept);
   return [
     {
       question,
@@ -721,7 +986,8 @@ const candidates = baseline.questions.flatMap((question) => {
       prompt: sentence(prompt),
       category,
       domain: domainFor(answer, prompt),
-      family: familyFor(answer, prompt),
+      family,
+      concept,
     },
   ];
 });
@@ -745,15 +1011,16 @@ const choiceSet = (candidate) => {
     .filter(
       (other) =>
         other !== candidate &&
+        other.concept !== candidate.concept &&
         other.family === candidate.family &&
-        candidate.family !== "general" &&
-        score(other) > 0,
+        candidate.family !== "general",
     )
     .sort((a, b) => score(b) - score(a) || a.answer.localeCompare(b.answer));
   const fallback = candidates
     .filter(
       (other) =>
         other !== candidate &&
+        other.concept !== candidate.concept &&
         !related.includes(other) &&
         other.domain === candidate.domain &&
         candidate.domain !== "general" &&
@@ -807,7 +1074,7 @@ const release = {
   schema_version: 1,
   exam_code: "COMPTIA-SECURITY-PLUS",
   edition: "SY0-701-v7",
-  release_label: "Google CySec → Security+ V7 definitions.7",
+  release_label: "Google CySec → Security+ V7 definitions.8",
   categories,
   questions,
 };
