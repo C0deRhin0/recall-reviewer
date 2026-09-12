@@ -109,6 +109,10 @@ const promptOverrides = {
     "Considering several viewpoints and treating colleagues respectfully to find stronger solutions to a security problem.",
   "term-0072":
     "Malware that attaches to a host file or program and replicates when the host runs.",
+  "term-0041":
+    "Malware that secretly collects information about a user or device and transmits it without the owner's informed consent.",
+  "term-0063":
+    "Malware that attaches to a host file or program and replicates when the host runs.",
   "term-0080":
     "People or groups that deliberately carry out harmful activity against systems, data, or organizations.",
   "term-0161":
@@ -180,6 +184,30 @@ const promptOverrides = {
     "The person or organization that determines why and how personal data is processed.",
   "term-0971":
     "A documented plan for restoring systems and operations after a disruptive incident.",
+  "term-0366":
+    "The practice of protecting information with mathematical techniques such as encryption, hashing, key management, and digital signatures.",
+  "term-0415":
+    "The physical components installed inside a computer, such as its processor, memory, storage, and motherboard.",
+  "term-0425":
+    "Data that a command receives from the keyboard or from output redirected by another command.",
+  "term-0451":
+    "A command-line modifier, usually preceded by a hyphen or double hyphen, that changes how a command behaves.",
+  "term-0504":
+    "An authorization framework that lets an application receive limited access to a user's resources without receiving the user's password.",
+  "term-0563":
+    "A diagram that maps possible attack paths from an attacker's goal to the assets or conditions needed to reach it.",
+  "term-0566":
+    "An HTTP authentication scheme that sends a username and password in an Authorization header using Base64 encoding rather than encryption.",
+  "term-0574":
+    "A value used with a cryptographic algorithm to encrypt or decrypt data, or to verify a digital signature.",
+  "term-0581":
+    "A condition in which a system, service, or data is unnecessarily accessible and can be exploited by a threat actor.",
+  "term-0755":
+    "The timely discovery of potential security events through monitoring, alerting, and analysis.",
+  "term-0757":
+    "A security platform that collects endpoint telemetry and helps analysts detect, investigate, and respond to suspicious activity on devices.",
+  "term-0763":
+    "A contemporaneous record an incident responder keeps to document actions, observations, decisions, and timestamps during an incident.",
 };
 
 const choiceOverrides = {
@@ -339,6 +367,12 @@ const finalChoiceOverrides = {
     "Chain of custody",
     "Incident response plan",
   ],
+  "term-0425": [
+    "Standard input",
+    "Standard output",
+    "Standard error",
+    "Command-line argument",
+  ],
   "term-0453": [
     "Root directory",
     "Home directory",
@@ -362,6 +396,12 @@ const finalChoiceOverrides = {
     "Attack tree",
     "Threat model",
     "Security control",
+  ],
+  "term-0566": [
+    "Basic auth",
+    "Bearer token authentication",
+    "Digest authentication",
+    "Client certificate authentication",
   ],
   "term-0589": [
     "Input validation",
@@ -392,6 +432,12 @@ const finalChoiceOverrides = {
     "Wireshark",
     "tcpdump",
     "Security information and event management (SIEM)",
+  ],
+  "term-0755": [
+    "Detection",
+    "Logging",
+    "Containment",
+    "Eradication",
   ],
   "term-0968": [
     "Data controller",
@@ -498,8 +544,157 @@ const objectiveFor = {
   governance: "SY0-701-5.4",
 };
 
+const specificContexts = new Map([
+  [
+    "operating system (os)",
+    {
+      technical:
+        "An operating system coordinates hardware resources and provides services for applications and users. It manages processes, memory, storage, devices, and access controls; a GUI is only one possible interface to it.",
+      eli5: "It is the main software that makes the computer's parts and programs work together.",
+    },
+  ],
+  [
+    "hardware",
+    {
+      technical:
+        "Hardware is the physical equipment of a computing system, such as processors, memory, storage, and network adapters. It differs from software, which is the instructions that run on those components.",
+      eli5: "It means the physical parts you can touch, such as the processor, memory, and disk.",
+    },
+  ],
+  [
+    "legacy operating system",
+    {
+      technical:
+        "A legacy operating system remains in use after it is outdated or no longer fully supported. It can create security risk because it may lack patches, modern controls, and compatible security software.",
+      eli5: "It is an old operating system that is still being used even though it may no longer receive important fixes.",
+    },
+  ],
+  [
+    "command",
+    {
+      technical:
+        "A command tells a program or operating system to perform an action. Arguments identify the target or input, while options modify how the command performs that action.",
+      eli5: "It is an instruction you give the computer to make it do something.",
+    },
+  ],
+  [
+    "hard drive",
+    {
+      technical:
+        "A hard drive provides persistent storage for files and programs. Unlike RAM, its contents normally remain available after power is removed.",
+      eli5: "It is long-term storage that keeps files even after the computer is turned off.",
+    },
+  ],
+  [
+    "internal hardware",
+    {
+      technical:
+        "Internal hardware refers specifically to components installed inside the computer case, including the CPU, memory, motherboard, and internal storage. It is a subset of the broader term hardware.",
+      eli5: "It means the computer parts inside the case rather than devices attached outside it.",
+    },
+  ],
+  [
+    "kernel",
+    {
+      technical:
+        "The kernel is the privileged core of an operating system. It manages processes, memory, hardware access, and the boundary between applications and system resources.",
+      eli5: "It is the operating system's control center that manages the computer's important resources.",
+    },
+  ],
+  [
+    "standard input",
+    {
+      technical:
+        "Standard input is the input stream a command reads by default. It can come from a keyboard, a file, or another command through a pipe, which makes command-line automation composable.",
+      eli5: "It is the usual path a command uses to receive information.",
+    },
+  ],
+  [
+    "argument (linux)",
+    {
+      technical:
+        "A command-line argument supplies the value or target a command acts on, such as a filename or user name. An option changes command behavior; an argument supplies what the command should use.",
+      eli5: "It is the extra detail you give a command so it knows what to work on.",
+    },
+  ],
+  [
+    "nano",
+    {
+      technical:
+        "nano is a terminal-based text editor commonly included with Linux distributions. It lets an analyst create or edit files without leaving the command line.",
+      eli5: "It is a simple text editor you can use inside a terminal.",
+    },
+  ],
+  [
+    "options",
+    {
+      technical:
+        "Command-line options alter how a command runs, often by enabling a feature or selecting an output format. They are different from arguments, which provide the command's target or input value.",
+      eli5: "They are switches added to a command to change how it behaves.",
+    },
+  ],
+  [
+    "root directory",
+    {
+      technical:
+        "The root directory, written as / on Linux, is the top of the filesystem hierarchy. All other directories and files exist beneath it, including home directories and system folders.",
+      eli5: "It is the top folder that every other folder on a Linux computer sits under.",
+    },
+  ],
+  [
+    "detection",
+    {
+      technical:
+        "Detection is the process of identifying possible security events through telemetry, rules, monitoring, and analysis. Logging records activity; detection uses those records and other signals to identify something worth investigating.",
+      eli5: "It means noticing signs that a security problem may be happening.",
+    },
+  ],
+  [
+    "command-line interface",
+    {
+      technical:
+        "A command-line interface accepts typed commands rather than visual controls. It is useful for administration, scripting, remote access, and repeatable security-analysis tasks.",
+      eli5: "It is a text screen where you tell the computer what to do by typing commands.",
+    },
+  ],
+  [
+    "computer security incident response teams (csirt)",
+    {
+      technical:
+        "A CSIRT is the coordinated team responsible for preparing for, managing, and improving the response to security incidents. It organizes technical investigation, communications, evidence handling, and recovery work.",
+      eli5: "It is the organized team that handles a company's security emergencies.",
+    },
+  ],
+  [
+    "incident handler’s journal",
+    {
+      technical:
+        "An incident handler's journal records a responder's actions, observations, decisions, and timestamps as an incident unfolds. It supports coordination, handoffs, evidence preservation, and the final incident report.",
+      eli5: "It is the responder's detailed notebook for recording what happened and what the team did.",
+    },
+  ],
+  [
+    "incident response plan",
+    {
+      technical:
+        "An incident response plan defines roles, communications, and procedures for preparing for, detecting, containing, eradicating, and recovering from incidents. It guides the response before a particular incident begins.",
+      eli5: "It is the written playbook for handling a security emergency.",
+    },
+  ],
+  [
+    "exposure",
+    {
+      technical:
+        "Exposure is unnecessary access or visibility that leaves a system, service, or data reachable by an unauthorized party. A vulnerability is a weakness; an exposure is the condition that makes something unnecessarily available.",
+      eli5: "It means something is left open or visible when it should not be.",
+    },
+  ],
+]);
+
 const conceptContext = (term, definition, category) => {
   const text = (term + " " + definition).toLowerCase();
+  const specific = specificContexts.get(term.toLowerCase());
+  if (specific) return specific;
   if (/security information and event management|\bsiem\b/.test(text))
     return {
       technical:
@@ -727,7 +922,7 @@ const conceptAliases = [
 ];
 
 const genericConceptWords = new Set(
-  "a an and as at by for from in into of on or the to with tool tools analysis example examples function functions method methods task tasks part parts step steps activity activities concept concepts category categories benefit benefits process processes approach approaches system systems security information management data use using guide overview introduction general common basic detailed".split(
+  "a an and as at by for from in into of on or the to with tool tools analysis example examples function functions method methods task tasks part parts step steps activity activities concept concepts category categories benefit benefits process processes approach approaches system systems security information management data use using guide overview introduction general common detailed".split(
     " ",
   ),
 );
@@ -782,11 +977,11 @@ const answerAppearsInPrompt = (answer, prompt) => {
   );
 };
 const incompleteTail =
-  /(?:\b(and|or|the|a|an|to|of|for|with|from|in|on|at|by|that|which|their|its|access|data|information|security|system|network|application|activity|behavior|analysis|monitoring|management|associated|comes|delivered|external|it|lawful|maintain|outline|perform|real-time|runnable|sends|vulnerable|way|log)\.?|;)$/i;
+  /(?:\b(and|or|the|a|an|to|of|for|with|from|in|on|at|by|that|which|their|its|access|data|information|security|system|network|application|activity|behavior|monitoring|management|associated|comes|delivered|external|lawful|maintain|outline|perform|real-time|runnable|sends|vulnerable|way|log)\.?|;)$/i;
 const badAnswer =
   /^(note|some of|this |these |there |it |the web consists|an ipv4 packet consists|the key difference|introduction to|stage \d|data layer|baseline|coordination$|constant vigilance|automate |join |keep |define |identify |process of |owner types|prompt$|benefits of|categories and|common protocols|access to|definition and|examples for|monitoring,|fix |improve |protect$|chief |cs[oif]|main dashboard|resource management|api connections|eve\.json|tcrei framework)/i;
 const badDefinition =
-  /^(there are multiple|these are essential|the nist cybersecurity framework provides|the web consists|the header \(|the core, tiers|assets, threats|policies, standards|network access, internet|the surface web|[a-z]+ \([^)]*\) and|\)|"|.*\bwhereas\b|.*\be\. ?g\.?)/i;
+  /^(there are multiple|these are essential|the nist cybersecurity framework provides|the web consists|the header \(|the core, tiers|assets, threats|policies, standards|network access, internet|the surface web|[a-z]+ \([^)]*\) and|\)|"|.*\bwhereas\b|.*\be\. ?g\.?|.*\bbecause it\.?$)/i;
 const domainFor = (answer, prompt) => {
   const text = `${answer} ${prompt}`.toLowerCase();
   if (
@@ -1098,7 +1293,7 @@ const release = {
   schema_version: 1,
   exam_code: "COMPTIA-SECURITY-PLUS",
   edition: "SY0-701-v7",
-  release_label: "Google CySec → Security+ V7 definitions.9",
+  release_label: "Google CySec → Security+ V7 definitions.10",
   categories,
   questions,
 };
