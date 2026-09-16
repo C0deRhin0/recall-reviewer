@@ -13,7 +13,7 @@ import {
 import { mutate, store } from "./store";
 import type { Identity } from "./auth";
 export function bankKey(user: Identity) {
-  return user.demo ? "bank:demo:" + user.id : "bank:production";
+  return user.demo ? "bank:demo" : "bank:production";
 }
 export function emptyBank(): Bank {
   return { activeId: null, releases: [], audit: [] };
