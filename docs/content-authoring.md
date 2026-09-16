@@ -30,6 +30,16 @@ Merge retains IDs omitted from the incoming file. Replace retires them for futur
 
 An older published release can be activated to roll back. Attempts retain complete original revisions and scores. The bank workbench includes revision-bound issue reports submitted by the current account.
 
+## Google Cybersecurity Certificate import
+
+When the private Google Cybersecurity Certificate source notes and question-bank drafts are present, run:
+
+```sh
+node scripts/build-google-cysec-imports.mjs
+```
+
+This produces two ignored files in `private/imports/`. In the owner workbench, import the term-coverage file with **Replace**, save and publish it. Then import the scenario file with **Merge**, save and publish it. The resulting release contains 1,391 questions. This two-step sequence is required because a single import is limited to 1,000 questions.
+
 ## Import limits and quality
 
 Maximum input: 2 MiB and 1,000 questions per batch. Duplicate IDs/prompts, missing explanations, invalid correct choices, unknown categories, duplicate options and common position-dependent choices are rejected. The complete resulting bank must also remain within storage limits described in architecture.md.
