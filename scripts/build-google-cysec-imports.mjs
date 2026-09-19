@@ -30,7 +30,14 @@ const scenarioRelease = {
   edition: "SY0-701-v7",
   release_label: "Google CySec → Security+ V7 scenarios.1",
   categories,
-  questions: modules.flatMap((bank) => bank.questions),
+  questions: modules.flatMap((bank) =>
+    bank.questions.map((question) => ({
+      ...question,
+      objective_code: question.objective_code.startsWith("SY0-701-")
+        ? question.objective_code
+        : "SY0-701-" + question.objective_code,
+    })),
+  ),
 };
 
 await mkdir(importDirectory, { recursive: true, mode: 0o700 });

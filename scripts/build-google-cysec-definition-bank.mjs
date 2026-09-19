@@ -64,8 +64,75 @@ const plainContext = {
     "It names a rule, responsibility, or process that helps an organization stay safe.",
 };
 
+const categoryFor = (term, definition, fallback) => {
+  const text = (term + " " + definition).toLowerCase();
+  if (
+    /intrusion detection|security information and event management|\bsiem\b|splunk|chronicle/.test(
+      text,
+    )
+  )
+    return "operations";
+  if (
+    /communication|growth mindset|problem-solving|time management|transferable skill|technical skill/.test(
+      text,
+    )
+  )
+    return "general-concepts";
+  if (
+    /financial loss|brand trust|reputation|business productivity|regulatory|compliance|hipaa|gdpr|law|legal|policy|governance|audit/.test(
+      text,
+    )
+  )
+    return "governance";
+  if (
+    /phish|social engineering|vishing|smishing|baiting|pretext|malware|ransomware|virus|worm|rootkit|spyware|trojan|threat actor|exploit|vulnerab/.test(
+      text,
+    )
+  )
+    return "threats";
+  if (
+    /encrypt|cipher|hash|cryptograph|certificate|key pair|signature|network|protocol|vpn|ip address|firewall|dns|tcp|udp|router|cloud|segmentation/.test(
+      text,
+    )
+  )
+    return "architecture";
+  if (
+    /\blog\b|siem|alert|monitor|packet|traffic|query|splunk|chronicle|incident response|containment|forensic|evidence|remediat|python|sql|code|programming|function|list|tuple|regex|style guide/.test(
+      text,
+    )
+  )
+    return "operations";
+  return fallback;
+};
+
+const objectiveFor = {
+  "general-concepts": "SY0-701-1.2",
+  threats: "SY0-701-2.2",
+  architecture: "SY0-701-3.1",
+  operations: "SY0-701-4.4",
+  governance: "SY0-701-5.4",
+};
+
 const conceptContext = (term, definition, category) => {
   const text = (term + " " + definition).toLowerCase();
+  if (/growth mindset/.test(text))
+    return {
+      technical:
+        "It supports continuous professional development in a changing field. Analysts use it to keep their knowledge current, accept feedback, and improve their approach when a threat or tool changes.",
+      eli5: "It means staying willing to learn and improve instead of giving up when something is new.",
+    };
+  if (/communication/.test(text))
+    return {
+      technical:
+        "It lets analysts communicate risks, evidence, and recommended actions to both technical and nontechnical stakeholders. Clear communication supports timely decisions and coordinated incident response.",
+      eli5: "It means explaining the security problem clearly so the right people can help fix it.",
+    };
+  if (/problem-solving|time management/.test(text))
+    return {
+      technical:
+        "It supports sound operational decisions by helping an analyst prioritize the most important work, assess options, and act within the time available.",
+      eli5: "It helps you focus on the most important problem and work through it step by step.",
+    };
   if (/rainbow table/.test(text))
     return {
       technical:
@@ -136,7 +203,11 @@ const conceptContext = (term, definition, category) => {
         "It concerns information that requires controlled handling. Apply data classification, least privilege, approved retention, and secure disposal according to organizational and legal requirements.",
       eli5: "It is about protecting information that can identify or affect a person.",
     };
-  if (/log|siem|alert|monitor|packet|traffic|query|splunk|chronicle/.test(text))
+  if (
+    /\blog\b|siem|alert|monitor|packet|traffic|query|splunk|chronicle/.test(
+      text,
+    )
+  )
     return {
       technical:
         "It is used in detection or investigation. Preserve the underlying evidence and verify any conclusion against the relevant logs, packets, or other telemetry.",
@@ -201,11 +272,14 @@ const questions = baseline.questions.flatMap((question) => {
     ...choice,
     text: clean(choice.text),
   }));
-  const context = conceptContext(answer, prompt, question.category_slug);
+  const category = categoryFor(answer, prompt, question.category_slug);
+  const context = conceptContext(answer, prompt, category);
   return [
     {
       ...question,
       external_id: "definition-" + question.external_id,
+      category_slug: category,
+      objective_code: objectiveFor[category],
       prompt,
       choices,
       explanation_technical:
