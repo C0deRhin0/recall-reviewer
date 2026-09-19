@@ -40,6 +40,14 @@ node scripts/build-google-cysec-imports.mjs
 
 This produces one ignored scenario-question file in `private/imports/`. Import it with **Replace**, then review, save, and publish it. The generated release currently contains 402 questions. Do not publish term-definition coverage drafts: every released item must use a realistic scenario and explain the answer in its own words.
 
+Definition questions are stored separately from the scenario bank. Build the cleaned definition release with:
+
+```sh
+node scripts/build-google-cysec-definition-bank.mjs
+```
+
+It writes the source bank to `private/question-banks/definition-banks/` and an import-ready copy to `private/imports/`. Definition prompts contain only the definition, while explanations expand on the term without displaying source-line references.
+
 ## Import limits and quality
 
 Maximum input: 2 MiB and 1,000 questions per batch. Duplicate IDs/prompts, missing explanations, invalid correct choices, unknown categories, duplicate options and common position-dependent choices are rejected. The complete resulting bank must also remain within storage limits described in architecture.md.
