@@ -38,7 +38,7 @@ When the private Google Cybersecurity Certificate source notes and question-bank
 node scripts/build-google-cysec-imports.mjs
 ```
 
-This produces two ignored files in `private/imports/`. In the owner workbench, import the term-coverage file with **Replace**, save and publish it. Then import the scenario file with **Merge**, save and publish it. The resulting release contains 1,391 questions. This two-step sequence is required because a single import is limited to 1,000 questions.
+This produces one ignored scenario-question file in `private/imports/`. Import it with **Replace**, then review, save, and publish it. The generated release currently contains 402 questions. Do not publish term-definition coverage drafts: every released item must use a realistic scenario and explain the answer in its own words.
 
 ## Import limits and quality
 
