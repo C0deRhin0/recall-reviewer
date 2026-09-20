@@ -3,6 +3,7 @@ import type {
   Attempt,
   Bank,
   Mode,
+  ContentStyle,
   Disclosure,
   PublicAttempt,
   Release,
@@ -74,9 +75,13 @@ export function eligibleQuestions(
   state: UserState,
   mode: Mode,
   category: string,
+  contentStyle: ContentStyle = "mixed",
   now = new Date(),
 ) {
   return release.questions.filter((q) => {
+    const definition = q.tags.includes("definition");
+    if (contentStyle === "definition" && !definition) return false;
+    if (contentStyle === "scenario" && definition) return false;
     if (category && q.category_slug !== category) return false;
     if (mode === "bookmarks")
       return state.bookmarks.includes(
@@ -114,6 +119,7 @@ export function startAttempt(
   state: UserState,
   config: {
     mode: Mode;
+    contentStyle?: ContentStyle;
     category: string;
     count: number;
     disclosure: Disclosure;
@@ -128,7 +134,14 @@ export function startAttempt(
   if (state.attempts.filter((a) => !a.completedAt).length >= 5)
     throw new Error("Finish an existing session before starting another.");
   const release = activeRelease(bank),
-    pool = eligibleQuestions(release, state, config.mode, config.category, now);
+    pool = eligibleQuestions(
+      release,
+      state,
+      config.mode,
+      config.category,
+      config.contentStyle,
+      now,
+    );
   if (!pool.length)
     throw new Error("No questions match this practice set yet.");
   if (config.count > pool.length)
@@ -190,6 +203,7 @@ export function startAttempt(
     edition: release.edition,
     examCode: release.examCode,
     mode: config.mode,
+    contentStyle: config.contentStyle || "mixed",
     disclosure: config.mode === "mock" ? "after-session" : config.disclosure,
     startedAt: now.toISOString(),
     deadline:

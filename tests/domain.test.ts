@@ -10,6 +10,7 @@ import {
   answer,
   finishAttempt,
   publicAttempt,
+  eligibleQuestions,
   shuffle,
   startAttempt,
   streak,
@@ -139,6 +140,33 @@ describe("question import and publication", () => {
     expect(() => parseImport("x".repeat(2 * 1024 * 1024 + 1), "json")).toThrow(
       "2 MiB",
     ));
+});
+
+describe("question content styles", () => {
+  it("filters scenario and definition questions before session selection", () => {
+    const bank = initialBank();
+    const release = activeRelease(bank);
+    release.questions[0].tags.push("definition");
+    const state = initialUser();
+    expect(
+      eligibleQuestions(release, state, "mixed", "", "definition"),
+    ).toHaveLength(1);
+    expect(
+      eligibleQuestions(release, state, "mixed", "", "scenario"),
+    ).toHaveLength(release.questions.length - 1);
+    const attempt = startAttempt(bank, state, {
+      mode: "mixed",
+      category: "",
+      contentStyle: "definition",
+      count: 1,
+      disclosure: "on-demand",
+      minutes: 30,
+      preferUnseen: false,
+      requestId: crypto.randomUUID(),
+    });
+    expect(attempt.contentStyle).toBe("definition");
+    expect(attempt.items[0].question.tags).toContain("definition");
+  });
 });
 describe("practice integrity", () => {
   it("shuffles without loss or duplicates", () => {

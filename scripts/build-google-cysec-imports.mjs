@@ -36,6 +36,7 @@ const scenarioRelease = {
       objective_code: question.objective_code.startsWith("SY0-701-")
         ? question.objective_code
         : "SY0-701-" + question.objective_code,
+      tags: [...new Set([...question.tags, "scenario"])],
     })),
   ),
 };

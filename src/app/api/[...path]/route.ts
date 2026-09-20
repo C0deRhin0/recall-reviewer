@@ -319,6 +319,9 @@ async function handle(
         ])
         .parse(request.nextUrl.searchParams.get("mode") || "mixed");
       const category = request.nextUrl.searchParams.get("category") || "";
+      const contentStyle = z
+        .enum(["scenario", "definition", "mixed"])
+        .parse(request.nextUrl.searchParams.get("contentStyle") || "mixed");
       return reply({
         count: bank.activeId
           ? eligibleQuestions(
@@ -326,6 +329,7 @@ async function handle(
               await getUserState(user),
               mode,
               category,
+              contentStyle,
             ).length
           : 0,
       });
@@ -343,6 +347,9 @@ async function handle(
             "weighted",
           ]),
           category: z.string().max(100),
+          contentStyle: z
+            .enum(["scenario", "definition", "mixed"])
+            .default("mixed"),
           count: z.number().int().min(1).max(100),
           disclosure: z.enum(["automatic", "on-demand", "after-session"]),
           minutes: z.number().int().min(1).max(180),

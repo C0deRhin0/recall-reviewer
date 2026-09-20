@@ -1,6 +1,11 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import type { Disclosure, Mode, PublicAttempt } from "@/domain/types";
+import type {
+  ContentStyle,
+  Disclosure,
+  Mode,
+  PublicAttempt,
+} from "@/domain/types";
 import { api, modeNames, type Dashboard } from "./client";
 import Modal from "./Modal";
 import StudyIcon from "./StudyIcon";
@@ -28,6 +33,7 @@ export default function Practice({
     [message, setMessage] = useState("");
   const [mode, setMode] = useState<Mode>(preset.mode as Mode),
     [category, setCategory] = useState(preset.category),
+    [contentStyle, setContentStyle] = useState<ContentStyle>("mixed"),
     [count, setCount] = useState(10),
     [disclosure, setDisclosure] = useState<Disclosure>(
       dashboard.profile.disclosure,
@@ -60,7 +66,7 @@ export default function Practice({
     let live = true;
     setPool(null);
     api<{ count: number }>(
-      `pool?mode=${mode}&category=${encodeURIComponent(category)}`,
+      `pool?mode=${mode}&category=${encodeURIComponent(category)}&contentStyle=${contentStyle}`,
     )
       .then((r) => {
         if (live) {
@@ -74,7 +80,7 @@ export default function Practice({
     return () => {
       live = false;
     };
-  }, [mode, category, dashboard.release?.id]);
+  }, [mode, category, contentStyle, dashboard.release?.id]);
   useEffect(() => {
     finishing.current = false;
     setLens("all");
@@ -231,6 +237,7 @@ export default function Practice({
                 const a = await api<PublicAttempt>("attempts", {
                   mode,
                   category,
+                  contentStyle,
                   count,
                   disclosure,
                   minutes,
@@ -278,6 +285,22 @@ export default function Practice({
                   </button>
                 ))}
               </div>
+            </div>
+            <div className="field-section">
+              <span className="eyebrow">Question style</span>
+              <label>
+                Include
+                <select
+                  value={contentStyle}
+                  onChange={(e) =>
+                    setContentStyle(e.target.value as ContentStyle)
+                  }
+                >
+                  <option value="mixed">Mixed</option>
+                  <option value="scenario">Scenarios only</option>
+                  <option value="definition">Definitions only</option>
+                </select>
+              </label>
             </div>
             <div className="field-section">
               <span className="eyebrow">Session</span>

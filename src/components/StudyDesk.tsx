@@ -37,6 +37,7 @@ export default function StudyDesk({
     const settings = {
       mode: category ? "category" : "mixed",
       category,
+      contentStyle: "mixed",
       count: size,
       disclosure,
       minutes: 30,
