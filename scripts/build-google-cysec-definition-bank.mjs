@@ -41,6 +41,43 @@ const definitionFrom = (prompt) =>
       .replace(/\s*Which term best matches this description\?\s*$/i, ""),
   );
 
+const sentence = (value) => {
+  const text = value.replace(/\s+/g, " ").trim();
+  return /[.!?]["')\]]?$/.test(text) ? text : text + ".";
+};
+
+const concise = (value, max = 240) => {
+  const text = sentence(value);
+  if (text.length <= max) return text;
+  const boundary = Math.max(
+    text.lastIndexOf(". ", max),
+    text.lastIndexOf("; ", max),
+    text.lastIndexOf(", ", max),
+    text.lastIndexOf(" ", max),
+  );
+  return (
+    text.slice(0, boundary > 80 ? boundary : max).replace(/[,. ]+$/, "") + "…"
+  );
+};
+
+const plainDefinition = (value) =>
+  sentence(
+    value
+      .replace(/\s*\([^)]{1,120}\)/g, "")
+      .replace(/cybersecurity analysts?/gi, "security teams")
+      .replace(/organizations?/gi, "companies")
+      .replace(/\s+/g, " ")
+      .trim(),
+  );
+
+function explanationFor(term, definition, context) {
+  const plain = concise(plainDefinition(definition));
+  return {
+    technical: `${term} fits this definition: ${sentence(definition)} ${context.technical}`,
+    eli5: `${term} is the simple name for this idea: ${plain} ` + context.eli5,
+  };
+}
+
 const technicalContext = {
   "general-concepts":
     "It gives analysts a precise way to discuss a core security idea and distinguish it from related concepts.",
@@ -115,11 +152,26 @@ const objectiveFor = {
 
 const conceptContext = (term, definition, category) => {
   const text = (term + " " + definition).toLowerCase();
+  if (
+    /\b(ids|intrusion detection|snort|suricata)\b/.test(text) ||
+    /signature.*\b(alert|pass|reject)\b/.test(text)
+  )
+    return {
+      technical:
+        "In an IDS rule, this field determines the response after the rule conditions match. The chosen action can generate an alert, permit traffic, or reject it according to the rule design.",
+      eli5: "It is the instruction that tells the alarm system what to do after it spots the pattern.",
+    };
   if (/growth mindset/.test(text))
     return {
       technical:
         "It supports continuous professional development in a changing field. Analysts use it to keep their knowledge current, accept feedback, and improve their approach when a threat or tool changes.",
       eli5: "It means staying willing to learn and improve instead of giving up when something is new.",
+    };
+  if (/diverse perspectives|mutual respect/.test(text))
+    return {
+      technical:
+        "Different backgrounds and viewpoints can expose assumptions or blind spots that one person may miss. Respectful collaboration helps a team compare options and choose a more complete response to a security problem.",
+      eli5: "People who see a problem differently can spot things each other missed, so the team can make a better choice.",
     };
   if (/communication/.test(text))
     return {
@@ -274,6 +326,7 @@ const questions = baseline.questions.flatMap((question) => {
   }));
   const category = categoryFor(answer, prompt, question.category_slug);
   const context = conceptContext(answer, prompt, category);
+  const explanation = explanationFor(answer, prompt, context);
   return [
     {
       ...question,
@@ -282,9 +335,8 @@ const questions = baseline.questions.flatMap((question) => {
       objective_code: objectiveFor[category],
       prompt,
       choices,
-      explanation_technical:
-        answer + " is the correct term. " + context.technical,
-      explanation_eli5: context.eli5,
+      explanation_technical: explanation.technical,
+      explanation_eli5: explanation.eli5,
       tags: ["definition", "google-cysec", "definition-bank"],
       source_reference: "Google Cybersecurity Certificate definition bank.",
       change_note:
@@ -297,7 +349,7 @@ const release = {
   schema_version: 1,
   exam_code: "COMPTIA-SECURITY-PLUS",
   edition: "SY0-701-v7",
-  release_label: "Google CySec → Security+ V7 definitions.1",
+  release_label: "Google CySec → Security+ V7 definitions.3",
   categories,
   questions,
 };
