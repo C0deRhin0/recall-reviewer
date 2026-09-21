@@ -10,6 +10,7 @@ import type {
   UserState,
 } from "./types";
 import { poolCountKey } from "./types";
+import { publicError } from "./errors";
 export function shuffle<T>(
   items: T[],
   random: (n: number) => number = randomInt,
@@ -65,7 +66,7 @@ export function streak(state: UserState, now = new Date()) {
 export function activeRelease(bank: Bank) {
   const release = bank.releases.find((r) => r.id === bank.activeId);
   if (!release)
-    throw new Error("Publish a question release before starting practice.");
+    throw publicError("Publish a question release before starting practice.");
   return release;
 }
 export function questionKey(exam: string, edition: string, id: string) {
@@ -161,7 +162,7 @@ export function startAttempt(
   const existing = state.attempts.find((a) => a.id === config.requestId);
   if (existing) return existing;
   if (state.attempts.filter((a) => !a.completedAt).length >= 5)
-    throw new Error("Finish an existing session before starting another.");
+    throw publicError("Finish an existing session before starting another.");
   const release = activeRelease(bank),
     pool = eligibleQuestions(
       release,
@@ -172,19 +173,19 @@ export function startAttempt(
       now,
     );
   if (!pool.length)
-    throw new Error("No questions match this practice set yet.");
+    throw publicError("No questions match this practice set yet.");
   if (config.count > pool.length)
-    throw new Error(
+    throw publicError(
       `Only ${pool.length} questions are available. Choose ${pool.length} or fewer.`,
     );
   let selected = shuffle(pool),
     notice = "";
   if (config.mode === "weighted") {
     if (config.category)
-      throw new Error("Weighted practice requires all categories.");
+      throw publicError("Weighted practice requires all categories.");
     const total = release.categories.reduce((s, c) => s + c.weight, 0);
     if (total <= 0)
-      throw new Error("Configure domain weights before weighted practice.");
+      throw publicError("Configure domain weights before weighted practice.");
     const quotas = release.categories.map((c) => ({
       c,
       raw: (config.count * c.weight) / total,
@@ -198,7 +199,7 @@ export function startAttempt(
     for (const { c, n } of quotas) {
       const list = shuffle(pool.filter((q) => q.category_slug === c.slug));
       if (list.length < n)
-        throw new Error(
+        throw publicError(
           `${c.name} needs ${n} questions for this weighted set; only ${list.length} are available.`,
         );
       selected.push(...list.slice(0, n));
@@ -310,18 +311,18 @@ export function answer(
   now = new Date(),
 ) {
   const a = state.attempts.find((a) => a.id === id);
-  if (!a) throw new Error("Session not found.");
-  if (a.completedAt) throw new Error("This session has ended.");
+  if (!a) throw publicError("Session not found.");
+  if (a.completedAt) throw publicError("This session has ended.");
   if (a.deadline && new Date(a.deadline) <= now) {
     finishAttempt(state, a, now);
     return a;
   }
   const item = a.items[index];
   if (!item || !item.choices.some((c) => c.id === choice))
-    throw new Error("Invalid answer choice.");
+    throw publicError("Invalid answer choice.");
   if (item.selectedId && a.mode !== "mock") {
     if (item.selectedId === choice) return a;
-    throw new Error("This answer is already locked.");
+    throw publicError("This answer is already locked.");
   }
   item.selectedId = choice;
   item.guessed = guessed;

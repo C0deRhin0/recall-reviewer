@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { createClient, type Session } from "@supabase/supabase-js";
 import { createHash, randomBytes, randomUUID } from "node:crypto";
 import { config } from "./config";
+import { publicError } from "../domain/errors";
 import { mutate, privileged, store } from "./store";
 const cookieName = "reviewer_session";
 const workspaceCookie = "reviewer_local_workspace";
@@ -68,7 +69,8 @@ async function rememberLocalWorkspace(id: string) {
   });
 }
 export async function openDemoSession() {
-  if (config().mode !== "demo") throw new Error("Demo access is disabled.");
+  if (config().mode !== "demo")
+    throw publicError("Demo access is disabled.", 404);
   const active = await currentSession();
   if (active) {
     await rememberLocalWorkspace(active.id);
@@ -82,7 +84,7 @@ export async function openDemoSession() {
 }
 export async function saveSession(session: Session | null, demoId?: string) {
   if (demoId && config().mode !== "demo")
-    throw new Error("Demo access is disabled.");
+    throw publicError("Demo access is disabled.", 404);
   const token = randomBytes(32).toString("base64url"),
     csrf = randomBytes(32).toString("base64url");
   const saved: SavedSession = {
@@ -175,13 +177,13 @@ export async function identity(): Promise<Identity | null> {
 }
 export async function authenticatedClient() {
   const s = await currentSession();
-  if (!s) throw new Error("Sign in to continue.");
+  if (!s) throw publicError("Sign in to continue.", 401);
   const client = authClient();
   const { error } = await client.auth.setSession({
     access_token: s.accessToken,
     refresh_token: s.refreshToken,
   });
-  if (error) throw new Error("Sign in again to continue.");
+  if (error) throw publicError("Sign in again to continue.", 401);
   return client;
 }
 export async function revokeSession(global = false) {
@@ -193,7 +195,7 @@ export async function revokeSession(global = false) {
         global ? "global" : "local",
       );
       if (error)
-        throw new Error("Could not revoke your session. Please retry.");
+        throw publicError("Could not revoke your session. Please retry.", 503);
     }
     await mutate(
       "session:" + digest(s.token),
@@ -223,5 +225,8 @@ export async function rateLimit(key: string, limit: number, windowMs: number) {
     },
   );
   if (!allowed)
-    throw new Error("Too many requests. Wait a few minutes and try again.");
+    throw publicError(
+      "Too many requests. Wait a few minutes and try again.",
+      429,
+    );
 }

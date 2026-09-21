@@ -172,6 +172,8 @@ export default function Auth({
                   type="password"
                   minLength={12}
                   maxLength={200}
+                  pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9]).{12,}"
+                  title="Use 12 or more characters, including uppercase and lowercase letters, a number, and a symbol."
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -179,7 +181,8 @@ export default function Auth({
                 />
               </label>
               <p className="fine-print">
-                At least 12 characters. Existing sessions will be signed out.
+                Use 12+ characters with uppercase and lowercase letters, a
+                number, and a symbol. Existing sessions will be signed out.
               </p>
               <button className="button primary wide" disabled={busy}>
                 {busy ? "Saving…" : "Update password"}
@@ -226,6 +229,17 @@ export default function Auth({
                     type="password"
                     required
                     minLength={register ? 12 : undefined}
+                    maxLength={register ? 200 : undefined}
+                    pattern={
+                      register
+                        ? "(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9]).{12,}"
+                        : undefined
+                    }
+                    title={
+                      register
+                        ? "Use 12 or more characters, including uppercase and lowercase letters, a number, and a symbol."
+                        : undefined
+                    }
                     autoComplete={
                       register ? "new-password" : "current-password"
                     }
@@ -278,8 +292,9 @@ export default function Auth({
               )}
               {register && (
                 <p className="fine-print">
-                  Use at least 12 characters. You will need to confirm your
-                  email before signing in.
+                  Use 12+ characters with uppercase and lowercase letters, a
+                  number, and a symbol. You will need to confirm your email
+                  before signing in.
                 </p>
               )}
             </form>

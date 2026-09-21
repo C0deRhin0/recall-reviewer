@@ -8,25 +8,37 @@ export async function api<T = unknown>(
   path: string,
   data?: unknown,
 ): Promise<T> {
-  const response = await fetch("/api/" + path, {
-    method: data === undefined ? "GET" : "POST",
-    credentials: "same-origin",
-    cache: "no-store",
-    headers:
-      data === undefined
-        ? {}
-        : {
-            "Content-Type": "application/json",
-            "X-Reviewer-Request": "1",
-            "X-CSRF-Token": csrf,
-          },
-    body: data === undefined ? undefined : JSON.stringify(data),
-  });
-  const result = await response.json();
+  let response: Response;
+  try {
+    response = await fetch("/api/" + path, {
+      method: data === undefined ? "GET" : "POST",
+      credentials: "same-origin",
+      cache: "no-store",
+      headers:
+        data === undefined
+          ? {}
+          : {
+              "Content-Type": "application/json",
+              "X-Reviewer-Request": "1",
+              "X-CSRF-Token": csrf,
+            },
+      body: data === undefined ? undefined : JSON.stringify(data),
+    });
+  } catch {
+    throw new Error(
+      "We could not reach Recall. Check your connection and try again.",
+    );
+  }
+  const result = await response.json().catch(() => ({}));
   if (response.status === 401 && !path.startsWith("auth/"))
     window.dispatchEvent(new Event("reviewer:session-expired"));
   if (!response.ok)
-    throw new Error(result.error || "Request failed. Try again.");
+    throw new Error(
+      result.error ||
+        (response.status >= 500
+          ? "Recall is temporarily unavailable. Please try again shortly."
+          : "We could not complete that request. Please try again."),
+    );
   return result;
 }
 export function download(name: string, data: unknown) {

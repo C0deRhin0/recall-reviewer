@@ -300,6 +300,8 @@ export default function Settings({
                   type="password"
                   minLength={12}
                   maxLength={200}
+                  pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9]).{12,}"
+                  title="Use 12 or more characters, including uppercase and lowercase letters, a number, and a symbol."
                   required
                   autoComplete="new-password"
                   value={password}
@@ -307,8 +309,9 @@ export default function Settings({
                 />
               </label>
               <p className="fine-print">
-                At least 12 characters. Changing your password signs out
-                existing sessions.
+                Use 12+ characters with uppercase and lowercase letters, a
+                number, and a symbol. Changing your password signs out existing
+                sessions.
               </p>
               <button className="button secondary" disabled={busy}>
                 Update password

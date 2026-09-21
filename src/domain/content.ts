@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { createHash, randomUUID } from "node:crypto";
 import { parse } from "csv-parse/sync";
+import { publicError } from "./errors";
 import type { Bank, Category, Release } from "./types";
 const text = (max: number) => z.string().trim().min(1).max(max);
 const slug = text(100).regex(/^[a-zA-Z0-9][a-zA-Z0-9._-]*$/);
@@ -106,13 +107,15 @@ export function parseImport(
   },
 ): ImportPayload {
   if (Buffer.byteLength(raw) > 2 * 1024 * 1024)
-    throw new Error(
+    throw publicError(
       "Import exceeds the 2 MiB limit. Split the bank into smaller batches.",
     );
   if (format === "json")
     return bankSchema.parse(JSON.parse(raw.replace(/^\uFEFF/, "")));
   if (!metadata)
-    throw new Error("CSV imports require exam, edition and category metadata.");
+    throw publicError(
+      "CSV imports require exam, edition and category metadata.",
+    );
   const rows = parse(raw, {
     columns: true,
     bom: true,
@@ -125,7 +128,7 @@ export function parseImport(
       (r.exam_code && r.exam_code !== metadata.exam_code) ||
       (r.edition && r.edition !== metadata.edition)
     )
-      throw new Error(
+      throw publicError(
         `Row ${i + 2}: edition or exam does not match this bank.`,
       );
     return {
@@ -164,7 +167,7 @@ export function prepareRelease(
     (active.edition !== input.edition || active.examCode !== input.exam_code) &&
     mode === "merge"
   )
-    throw new Error(
+    throw publicError(
       "Use replace to start a different edition. Editions cannot be merged.",
     );
   const baseline =
@@ -231,16 +234,16 @@ export function prepareRelease(
     new Set(questions.map((q) => q.prompt.toLowerCase().replace(/\s+/g, " ")))
       .size !== questions.length
   )
-    throw new Error(
+    throw publicError(
       "This import duplicates a question retained in the release.",
     );
   if (questions.length > 10000)
-    throw new Error("A release may contain at most 10,000 questions.");
+    throw publicError("A release may contain at most 10,000 questions.");
   const categories = input.categories;
   if (
     questions.some((q) => !categories.some((c) => c.slug === q.category_slug))
   )
-    throw new Error("The category list must cover retained questions too.");
+    throw publicError("The category list must cover retained questions too.");
   const releaseHash = hash({
     exam: input.exam_code,
     edition: input.edition,

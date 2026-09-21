@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z, ZodError } from "zod";
 import { randomUUID } from "node:crypto";
+import { PublicError } from "@/domain/errors";
 import { config } from "@/server/config";
 import {
   authClient,
@@ -51,7 +52,43 @@ const reply = (data: unknown, status = 200) =>
   });
 const uuid = z.string().uuid();
 const fail = (message: string, status = 400) =>
-  Object.assign(new Error(message), { status });
+  new PublicError(message, status);
+const passwordSchema = z
+  .string()
+  .min(12, "Password must be at least 12 characters.")
+  .max(200, "Password must be 200 characters or fewer.")
+  .regex(/[a-z]/, "Password must include a lowercase letter.")
+  .regex(/[A-Z]/, "Password must include an uppercase letter.")
+  .regex(/\d/, "Password must include a number.")
+  .regex(/[^A-Za-z0-9]/, "Password must include a symbol.");
+function signupError(message?: string) {
+  const detail = (message || "").toLowerCase();
+  if (
+    detail.includes("already registered") ||
+    detail.includes("already been registered")
+  )
+    return fail(
+      "An account already exists for that email. Sign in or reset its password.",
+      409,
+    );
+  if (
+    detail.includes("password") &&
+    (detail.includes("weak") ||
+      detail.includes("contain") ||
+      detail.includes("leaked"))
+  )
+    return fail(
+      "Choose a stronger password: use 12+ characters with uppercase and lowercase letters, a number, and a symbol.",
+    );
+  if (detail.includes("captcha"))
+    return fail(
+      "Security verification failed. Complete the check again and retry.",
+    );
+  return fail(
+    "We could not create the account right now. Please try again shortly.",
+    503,
+  );
+}
 function owner(user: Identity) {
   if (!user.owner) throw fail("Owner access required.", 403);
   if (!user.aal2 && !user.demo)
@@ -144,7 +181,7 @@ async function handle(
         const input = z
           .object({
             email: z.email().max(254),
-            password: z.string().min(12).max(200),
+            password: passwordSchema,
             captcha: z.string().min(1).max(4096),
           })
           .strict()
@@ -158,8 +195,7 @@ async function handle(
             emailRedirectTo: cfg.origin,
           },
         });
-        if (error)
-          throw fail("Unable to create that account. Please try again.");
+        if (error) throw signupError(error.message);
         return reply({
           message:
             "Check your email to confirm the account, then return here to sign in.",
@@ -218,10 +254,7 @@ async function handle(
           "Sign in again or verify your authenticator before changing your password.",
           403,
         );
-      const input = z
-        .object({ password: z.string().min(12).max(200) })
-        .strict()
-        .parse(data);
+      const input = z.object({ password: passwordSchema }).strict().parse(data);
       const client = await authenticatedClient();
       const { error } = await client.auth.updateUser({
         password: input.password,
@@ -772,18 +805,23 @@ async function handle(
         },
         400,
       );
-    const e = error as Error & { status?: number };
+    const e = error as Error;
+    const publicError = error instanceof PublicError ? error : null;
     console.error(
       JSON.stringify({
         event: "request_failed",
         requestId: randomUUID(),
-        status: e.status || 400,
+        status: publicError?.status || 500,
         type: e.name || "Error",
       }),
     );
     return reply(
-      { error: e.message || "Unable to complete the request." },
-      e.status || 400,
+      {
+        error:
+          publicError?.message ||
+          "We could not complete that request. Please try again shortly.",
+      },
+      publicError?.status || 500,
     );
   }
 }

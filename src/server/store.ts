@@ -4,6 +4,7 @@ import { mkdir, readFile, rename, writeFile, rm } from "node:fs/promises";
 import { join } from "node:path";
 import { createHash, randomUUID } from "node:crypto";
 import { config } from "./config";
+import { publicError } from "../domain/errors";
 export function privileged() {
   return createClient(
     process.env.SUPABASE_URL!,
@@ -61,7 +62,7 @@ export class ManagedStore implements Store {
     const { data, error } = await privileged().rpc("reviewer_read", {
       document_key: key,
     });
-    if (error) throw new Error("Storage unavailable. Please retry.");
+    if (error) throw publicError("Storage unavailable. Please retry.", 503);
     return data as Envelope<T> | null;
   }
   async cas<T>(key: string, expected: number, value: T) {
@@ -70,7 +71,7 @@ export class ManagedStore implements Store {
       expected_revision: expected,
       document_value: value,
     });
-    if (error) throw new Error("Storage unavailable. Please retry.");
+    if (error) throw publicError("Storage unavailable. Please retry.", 503);
     return data === true;
   }
 }
@@ -90,5 +91,8 @@ export async function mutate<T, R>(
     if (await backend.cas(key, record?.revision ?? 0, state)) return result;
     await new Promise((r) => setTimeout(r, 15 + Math.random() * 35));
   }
-  throw new Error("This record changed in another request. Please retry.");
+  throw publicError(
+    "This record changed in another request. Please retry.",
+    409,
+  );
 }
