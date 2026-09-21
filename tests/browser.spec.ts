@@ -95,7 +95,7 @@ test("owner stages, publishes and rolls back an immutable content release", asyn
   page,
 }) => {
   await login(page);
-  await page.getByRole("button", { name: "Question bank" }).click();
+  await page.getByRole("button", { name: "Published bank" }).click();
   await page.getByRole("button", { name: "Edit active release" }).click();
   const textarea = page.getByLabel("Question data");
   const payload = JSON.parse(await textarea.inputValue());
