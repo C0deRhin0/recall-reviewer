@@ -6,6 +6,7 @@ import type {
   Mode,
   PublicAttempt,
 } from "@/domain/types";
+import { poolCountKey } from "@/domain/types";
 import { api, modeNames, type Dashboard } from "./client";
 import Modal from "./Modal";
 import StudyIcon from "./StudyIcon";
@@ -40,7 +41,6 @@ export default function Practice({
     ),
     [minutes, setMinutes] = useState(30),
     [unseen, setUnseen] = useState(false),
-    [pool, setPool] = useState<number | null>(null),
     [remaining, setRemaining] = useState(""),
     [confirmFinish, setConfirmFinish] = useState(false),
     [report, setReport] = useState(false),
@@ -62,25 +62,11 @@ export default function Practice({
     setMode(preset.mode as Mode);
     setCategory(preset.category);
   }, [preset.mode, preset.category]);
+  const pool =
+    dashboard.poolCounts[poolCountKey(mode, category, contentStyle)] || 0;
   useEffect(() => {
-    let live = true;
-    setPool(null);
-    api<{ count: number }>(
-      `pool?mode=${mode}&category=${encodeURIComponent(category)}&contentStyle=${contentStyle}`,
-    )
-      .then((r) => {
-        if (live) {
-          setPool(r.count);
-          setCount((n) => Math.max(1, Math.min(n, r.count)));
-        }
-      })
-      .catch((e) => {
-        if (live) setError(e.message);
-      });
-    return () => {
-      live = false;
-    };
-  }, [mode, category, contentStyle, dashboard.release?.id]);
+    setCount((n) => Math.max(1, Math.min(n, Math.max(pool, 1))));
+  }, [pool]);
   useEffect(() => {
     finishing.current = false;
     setLens("all");
@@ -336,9 +322,7 @@ export default function Practice({
                     required
                   />
                   <span id="pool-help" className="fine-print">
-                    {pool === null
-                      ? "Checking available questions…"
-                      : `${pool} available in this set`}
+                    {`${pool} available in this set`}
                   </span>
                 </label>
                 {mode === "mock" && (

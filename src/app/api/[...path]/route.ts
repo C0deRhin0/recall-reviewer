@@ -25,7 +25,6 @@ import { initialUser, type Bank } from "@/domain/types";
 import {
   activeRelease,
   answer,
-  eligibleQuestions,
   expireAttempts,
   finishAttempt,
   publicAttempt,
@@ -330,34 +329,6 @@ async function handle(
       // Adopt existing local sessions before they sign out or expire.
       if (user.demo) await openDemoSession();
       return reply(dashboard(user, bank, await getUserState(user)));
-    }
-    if (request.method === "GET" && path === "pool") {
-      const mode = z
-        .enum([
-          "mixed",
-          "category",
-          "mistakes",
-          "bookmarks",
-          "due",
-          "mock",
-          "weighted",
-        ])
-        .parse(request.nextUrl.searchParams.get("mode") || "mixed");
-      const category = request.nextUrl.searchParams.get("category") || "";
-      const contentStyle = z
-        .enum(["scenario", "definition", "mixed"])
-        .parse(request.nextUrl.searchParams.get("contentStyle") || "mixed");
-      return reply({
-        count: bank.activeId
-          ? eligibleQuestions(
-              activeRelease(bank),
-              await getUserState(user),
-              mode,
-              category,
-              contentStyle,
-            ).length
-          : 0,
-      });
     }
     if (request.method === "POST" && path === "attempts") {
       const input = z

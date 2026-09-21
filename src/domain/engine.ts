@@ -9,6 +9,7 @@ import type {
   Release,
   UserState,
 } from "./types";
+import { poolCountKey } from "./types";
 export function shuffle<T>(
   items: T[],
   random: (n: number) => number = randomInt,
@@ -113,6 +114,34 @@ export function eligibleQuestions(
       );
     return true;
   });
+}
+export function availablePoolCounts(release: Release, state: UserState) {
+  const counts: Record<string, number> = {};
+  const modes: Mode[] = [
+    "mixed",
+    "category",
+    "mistakes",
+    "bookmarks",
+    "due",
+    "mock",
+    "weighted",
+  ];
+  const categories = [
+    "",
+    ...release.categories.map((category) => category.slug),
+  ];
+  const styles: ContentStyle[] = ["mixed", "scenario", "definition"];
+  for (const mode of modes)
+    for (const category of categories)
+      for (const contentStyle of styles)
+        counts[poolCountKey(mode, category, contentStyle)] = eligibleQuestions(
+          release,
+          state,
+          mode,
+          category,
+          contentStyle,
+        ).length;
+  return counts;
 }
 export function startAttempt(
   bank: Bank,

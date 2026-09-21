@@ -8,6 +8,7 @@ import {
 import {
   activeRelease,
   answer,
+  availablePoolCounts,
   finishAttempt,
   publicAttempt,
   eligibleQuestions,
@@ -17,7 +18,7 @@ import {
   summary,
   localDate,
 } from "../src/domain/engine";
-import { initialUser, type Bank } from "../src/domain/types";
+import { initialUser, poolCountKey, type Bank } from "../src/domain/types";
 import sample from "../content/examples/sample-bank.json";
 const initialBank = (): Bank => {
   const b: Bank = { activeId: null, releases: [], audit: [] };
@@ -143,6 +144,18 @@ describe("question import and publication", () => {
 });
 
 describe("question content styles", () => {
+  it("precalculates style and category availability for the initial workspace load", () => {
+    const bank = initialBank();
+    const release = activeRelease(bank);
+    release.questions[0].tags.push("definition");
+    const counts = availablePoolCounts(release, initialUser());
+    expect(counts[poolCountKey("mixed", "", "mixed")]).toBe(30);
+    expect(counts[poolCountKey("mixed", "", "definition")]).toBe(1);
+    expect(counts[poolCountKey("mixed", "", "scenario")]).toBe(29);
+    expect(
+      counts[poolCountKey("category", release.categories[0].slug, "mixed")],
+    ).toBeGreaterThan(0);
+  });
   it("filters scenario and definition questions before session selection", () => {
     const bank = initialBank();
     const release = activeRelease(bank);

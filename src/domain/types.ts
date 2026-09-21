@@ -42,6 +42,13 @@ export type Disclosure = "automatic" | "on-demand" | "after-session";
 export type ContentStyle = "scenario" | "definition" | "mixed";
 export type Mode =
   "mixed" | "category" | "mistakes" | "bookmarks" | "due" | "mock" | "weighted";
+export function poolCountKey(
+  mode: Mode,
+  category: string,
+  contentStyle: ContentStyle,
+) {
+  return `${mode}|${category || "all"}|${contentStyle}`;
+}
 export type Item = {
   question: Revision;
   choices: Choice[];

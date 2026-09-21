@@ -4,6 +4,7 @@ import { bankSchema, prepareRelease } from "../domain/content";
 import { type Bank, initialUser, type UserState } from "../domain/types";
 import {
   activeRelease,
+  availablePoolCounts,
   expireAttempts,
   publicAttempt,
   streak,
@@ -72,6 +73,7 @@ export function dashboard(user: Identity, bank: Bank, state: UserState) {
               questionKey(release.examCode, release.edition, q.external_id)
             ].fingerprint !== q.fingerprint),
       ).length || 0,
+    poolCounts: release ? availablePoolCounts(release, state) : {},
     release: release
       ? {
           id: release.id,
