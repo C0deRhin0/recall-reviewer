@@ -32,6 +32,7 @@ export default function App({
 }) {
   const [data, setData] = useState<Dashboard | null>(initialData),
     [loading, setLoading] = useState(false),
+    [loadingMessage, setLoadingMessage] = useState("Opening your study desk…"),
     [error, setError] = useState(""),
     [signingOutBusy, setSigningOutBusy] = useState(false),
     [view, setView] = useState<View>("dashboard"),
@@ -98,7 +99,7 @@ export default function App({
         <span className="brand">
           RECALL<span className="brand-period">.</span>
         </span>
-        <p>Opening your study desk…</p>
+        <p>{loadingMessage}</p>
       </div>
     );
   if (!data || recovery)
@@ -112,6 +113,7 @@ export default function App({
         <Auth
           recovery={recovery}
           onLogin={async () => {
+            setLoadingMessage("Opening your study desk…");
             setLoading(true);
             try {
               await refresh();
@@ -206,6 +208,8 @@ export default function App({
                 if (signingOut.current) return;
                 signingOut.current = true;
                 setSigningOutBusy(true);
+                setLoadingMessage("Signing out…");
+                setLoading(true);
                 try {
                   await api("auth/logout", {});
                   setCsrf("");
@@ -215,6 +219,7 @@ export default function App({
                 } finally {
                   signingOut.current = false;
                   setSigningOutBusy(false);
+                  setLoading(false);
                 }
               }}
               disabled={signingOutBusy}
