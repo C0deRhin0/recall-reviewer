@@ -25,6 +25,7 @@ export default function Auth({
       siteKey: string;
     } | null>(null),
     [reset, setReset] = useState(false),
+    [register, setRegister] = useState(false),
     [verified, setVerified] = useState(false),
     [email, setEmail] = useState(""),
     [password, setPassword] = useState(""),
@@ -101,9 +102,11 @@ export default function Auth({
               ? "Reset password"
               : reset
                 ? "Password reset"
-                : settings?.demo
-                  ? "Sample workspace"
-                  : "Sign in"}
+                : register
+                  ? "Create account"
+                  : settings?.demo
+                    ? "Sample workspace"
+                    : "Sign in"}
           </h1>
           {settings?.demo && (
             <p className="subtle">30 sample questions · Local progress</p>
@@ -189,6 +192,12 @@ export default function Auth({
                       { email, captcha },
                     );
                     setMessage(result.message);
+                  } else if (register) {
+                    const result = await api<{ message: string }>(
+                      "auth/signup",
+                      { email, password, captcha },
+                    );
+                    setMessage(result.message);
                   } else {
                     await api("auth/login", { email, password, captcha });
                     onLogin();
@@ -212,7 +221,10 @@ export default function Auth({
                   <input
                     type="password"
                     required
-                    autoComplete="current-password"
+                    minLength={register ? 12 : undefined}
+                    autoComplete={
+                      register ? "new-password" : "current-password"
+                    }
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                   />
@@ -227,7 +239,9 @@ export default function Auth({
                   ? "Please wait…"
                   : reset
                     ? "Send reset instructions"
-                    : "Sign in"}{" "}
+                    : register
+                      ? "Create account"
+                      : "Sign in"}{" "}
                 <span>→</span>
               </button>
               <button
@@ -235,13 +249,35 @@ export default function Auth({
                 className="text-button"
                 onClick={() => {
                   setReset(!reset);
+                  setRegister(false);
                   setError("");
                   setMessage("");
                 }}
               >
                 {reset ? "Back to sign in" : "Forgot your password?"}
               </button>
-              <p className="fine-print">Invitation only.</p>
+              {!reset && (
+                <button
+                  type="button"
+                  className="text-button"
+                  onClick={() => {
+                    setRegister(!register);
+                    setReset(false);
+                    setError("");
+                    setMessage("");
+                  }}
+                >
+                  {register
+                    ? "Already have an account? Sign in"
+                    : "Create an account"}
+                </button>
+              )}
+              {register && (
+                <p className="fine-print">
+                  Use at least 12 characters. You will need to confirm your
+                  email before signing in.
+                </p>
+              )}
             </form>
           )}
         </div>

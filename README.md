@@ -39,7 +39,7 @@ Browser tests use a fresh isolated browser, synthetic data and local demo identi
 
 ## Connect managed services
 
-Read [deployment instructions](docs/deployment.md). Copy placeholders into provider environment settings, switch to `APP_MODE=managed`, apply the migration, configure controlled enrollment, email recovery and CAPTCHA, and set the owner email allowlist. The owner then enrolls/verifies MFA before publishing questions.
+Read [deployment instructions](docs/deployment.md). Copy placeholders into provider environment settings, switch to `APP_MODE=managed`, apply the migration, enable verified public enrollment, email recovery and CAPTCHA, and set the owner email allowlist. The owner then enrolls/verifies MFA before publishing questions.
 
 Vercel previews and production must have separate Supabase projects and origins. Demo mode is refused on every Vercel environment. The app never writes to the deployed filesystem in managed mode.
 

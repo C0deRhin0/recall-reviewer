@@ -108,7 +108,7 @@ async function handle(
     }
     if (
       request.method === "POST" &&
-      ["auth/login", "auth/reset", "auth/recover"].includes(path)
+      ["auth/login", "auth/signup", "auth/reset", "auth/recover"].includes(path)
     ) {
       const client = cfg.mode === "managed" ? authClient() : null;
       if (!client) throw fail("Use the local sample session.");
@@ -135,6 +135,31 @@ async function handle(
           throw fail("Unable to sign in with those details.", 401);
         await saveSession(result.session);
         return reply({ ok: true });
+      }
+      if (path === "auth/signup") {
+        const input = z
+          .object({
+            email: z.email().max(254),
+            password: z.string().min(12).max(200),
+            captcha: z.string().min(1).max(4096),
+          })
+          .strict()
+          .parse(data);
+        await rateLimit("signup:" + input.email.toLowerCase(), 3, 60 * 60000);
+        const { error } = await client.auth.signUp({
+          email: input.email,
+          password: input.password,
+          options: {
+            captchaToken: input.captcha,
+            emailRedirectTo: cfg.origin,
+          },
+        });
+        if (error)
+          throw fail("Unable to create that account. Please try again.");
+        return reply({
+          message:
+            "Check your email to confirm the account, then return here to sign in.",
+        });
       }
       if (path === "auth/reset") {
         const input = z

@@ -20,7 +20,7 @@ Use separate Supabase projects and Auth settings for preview and production. Sta
 ## Database and identity setup
 
 1. Apply `supabase/migrations/001_reviewer.sql` using an administrative migration credential.
-2. Disable public signup. Create/invite the intended accounts through trusted provider administration. The application has no public enrollment endpoint.
+2. Enable public signup and email confirmation. The application provides a CAPTCHA-protected account-creation form and does not create a session until the visitor confirms their email address. Keep owner privileges limited with `OWNER_EMAILS`; ordinary accounts cannot manage question banks.
 3. Configure the Auth site URL and allowed redirects to the exact application origin and `/recover` path.
 4. Enable email confirmation, strong password requirements, provider authentication rate limits, and short-lived recovery links.
 5. Enable Cloudflare Turnstile in Supabase Auth, with the same widget whose public site key is in the app. Add the application hostname to the widget allowlist. Supabase validates each token; do not validate it twice.
@@ -36,7 +36,7 @@ Recovery email link:
 >
 ```
 
-This project uses a server-mediated recovery form. Do not use the stock fragment-token redirect template with this implementation. The token is exchanged only after the user submits the new-password form, avoiding link-scanner consumption on GET. The URL is cleared after a successful exchange. Invitation onboarding can use provider administration to create a confirmed account and then this reset flow; an app-specific invite-acceptance page is not implemented.
+This project uses a server-mediated recovery form. Do not use the stock fragment-token redirect template with this implementation. The token is exchanged only after the user submits the new-password form, avoiding link-scanner consumption on GET. The URL is cleared after a successful exchange.
 
 Supabase supports provider CAPTCHA on sign-in and recovery, and documents the email template variables used here. [CAPTCHA configuration](https://supabase.com/docs/guides/auth/auth-captcha), [email templates](https://supabase.com/docs/guides/auth/auth-email-templates)
 
