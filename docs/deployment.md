@@ -21,7 +21,7 @@ Use separate Supabase projects and Auth settings for preview and production. Sta
 
 1. Apply `supabase/migrations/001_reviewer.sql` using an administrative migration credential.
 2. Enable public signup and email confirmation. The application provides a CAPTCHA-protected account-creation form and does not create a session until the visitor confirms their email address. Keep owner privileges limited with `OWNER_EMAILS`; ordinary accounts cannot manage question banks.
-3. Configure the Auth site URL and allowed redirects to the exact application origin and `/recover` path.
+3. Configure the Auth site URL and allowed redirects to the exact application origin, `/confirmed`, and `/recover` paths.
 4. Enable email confirmation, strong password requirements, provider authentication rate limits, and short-lived recovery links.
 5. Enable Cloudflare Turnstile in Supabase Auth, with the same widget whose public site key is in the app. Add the application hostname to the widget allowlist. Supabase validates each token; do not validate it twice.
 6. Set up production SMTP and enable password/security notification emails.

@@ -192,13 +192,13 @@ async function handle(
           password: input.password,
           options: {
             captchaToken: input.captcha,
-            emailRedirectTo: cfg.origin,
+            emailRedirectTo: cfg.origin + "/confirmed",
           },
         });
         if (error) throw signupError(error.message);
         return reply({
           message:
-            "Check your email to confirm the account, then return here to sign in.",
+            "Check your email to confirm the account. We’ll then show you a sign-in button.",
         });
       }
       if (path === "auth/reset") {
