@@ -17,7 +17,7 @@ export default function StudyDesk({
   history: () => void;
 }) {
   const [category, setCategory] = useState(""),
-    [count, setCount] = useState(5),
+    [count, setCount] = useState("5"),
     [disclosure, setDisclosure] = useState<Disclosure>(data.profile.disclosure),
     [unseen, setUnseen] = useState(false),
     [busy, setBusy] = useState(false),
@@ -27,7 +27,11 @@ export default function StudyDesk({
     ? data.stats.categories.find((c) => c.slug === category)?.count || 0
     : data.release?.count || 0;
   const limit = Math.min(available, 100),
-    size = Math.min(count, limit);
+    requested = Number(count),
+    size =
+      Number.isFinite(requested) && requested > 0
+        ? Math.min(requested, limit)
+        : 0;
   const unfinished = data.attempts.filter((a) => !a.completedAt),
     recent = data.attempts.filter((a) => a.completedAt).slice(0, 4);
   async function start() {
@@ -56,6 +60,16 @@ export default function StudyDesk({
       setError((e as Error).message);
       setBusy(false);
     }
+  }
+  function normalizeCount() {
+    const parsed = Number(count);
+    setCount(
+      String(
+        Number.isFinite(parsed)
+          ? Math.max(1, Math.min(parsed, Math.max(limit, 1)))
+          : 1,
+      ),
+    );
   }
   return (
     <div className="study-desk">
@@ -163,9 +177,10 @@ export default function StudyDesk({
                 min={1}
                 max={Math.max(1, limit)}
                 required
-                value={size || 1}
+                value={count}
                 disabled={!limit || busy}
-                onChange={(e) => setCount(Math.max(1, Number(e.target.value)))}
+                onChange={(e) => setCount(e.target.value)}
+                onBlur={normalizeCount}
               />
             </label>
             <span className="pool-count">{available} available</span>

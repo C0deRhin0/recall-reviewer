@@ -35,7 +35,7 @@ export default function Practice({
   const [mode, setMode] = useState<Mode>(preset.mode as Mode),
     [category, setCategory] = useState(preset.category),
     [contentStyle, setContentStyle] = useState<ContentStyle>("mixed"),
-    [count, setCount] = useState(10),
+    [count, setCount] = useState("10"),
     [disclosure, setDisclosure] = useState<Disclosure>(
       dashboard.profile.disclosure,
     ),
@@ -64,8 +64,18 @@ export default function Practice({
   }, [preset.mode, preset.category]);
   const pool =
     dashboard.poolCounts[poolCountKey(mode, category, contentStyle)] || 0;
+  function normalizeCount() {
+    const parsed = Number(count);
+    const limit = Math.max(1, Math.min(pool, 100));
+    setCount(
+      String(
+        Number.isFinite(parsed) ? Math.max(1, Math.min(parsed, limit)) : 1,
+      ),
+    );
+  }
   useEffect(() => {
-    setCount((n) => Math.max(1, Math.min(n, Math.max(pool, 1))));
+    const parsed = Number(count);
+    if (parsed > Math.max(pool, 1)) setCount(String(Math.max(pool, 1)));
   }, [pool]);
   useEffect(() => {
     finishing.current = false;
@@ -224,7 +234,7 @@ export default function Practice({
                   mode,
                   category,
                   contentStyle,
-                  count,
+                  count: Number(count),
                   disclosure,
                   minutes,
                   preferUnseen: unseen,
@@ -318,7 +328,8 @@ export default function Practice({
                     value={count}
                     min={1}
                     max={Math.min(pool || 100, 100)}
-                    onChange={(e) => setCount(Number(e.target.value))}
+                    onChange={(e) => setCount(e.target.value)}
+                    onBlur={normalizeCount}
                     required
                   />
                   <span id="pool-help" className="fine-print">
