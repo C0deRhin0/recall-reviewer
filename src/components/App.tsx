@@ -4,16 +4,24 @@ import { api, date, modeNames, setCsrf, type Dashboard } from "./client";
 import Auth from "./Auth";
 import Practice from "./Practice";
 import Bank from "./Bank";
+import MyQuestions from "./MyQuestions";
 import Settings from "./Settings";
 import StudyDesk from "./StudyDesk";
 type View =
-  "dashboard" | "practice" | "progress" | "history" | "bank" | "settings";
+  | "dashboard"
+  | "practice"
+  | "progress"
+  | "history"
+  | "personal"
+  | "bank"
+  | "settings";
 const nav: { id: View; label: string; number: string }[] = [
   { id: "dashboard", label: "Study desk", number: "01" },
   { id: "practice", label: "Practice", number: "02" },
   { id: "progress", label: "Progress", number: "03" },
   { id: "history", label: "History", number: "04" },
-  { id: "bank", label: "Question bank", number: "05" },
+  { id: "personal", label: "Question bank", number: "05" },
+  { id: "bank", label: "Published bank", number: "06" },
 ];
 export default function App({
   recovery = false,
@@ -59,6 +67,7 @@ export default function App({
           "practice",
           "progress",
           "history",
+          "personal",
           "bank",
           "settings",
         ].includes(v || "")
@@ -281,6 +290,9 @@ export default function App({
               </div>
               <SessionList data={data} open={(id) => go("practice", id)} />
             </>
+          )}
+          {view === "personal" && (
+            <MyQuestions dashboard={data} refresh={refresh} />
           )}
           {view === "bank" && <Bank dashboard={data} refresh={refresh} />}
           {view === "settings" && (

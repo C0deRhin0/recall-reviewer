@@ -97,6 +97,7 @@ export type UserState = {
   }[];
   activity: Record<string, string[]>;
   reviews: Record<string, Review>;
+  personalQuestions: Revision[];
 };
 export const initialUser = (): UserState => ({
   profile: {
@@ -112,6 +113,7 @@ export const initialUser = (): UserState => ({
   reports: [],
   activity: {},
   reviews: {},
+  personalQuestions: [],
 });
 export type PublicItem = Omit<Item, "question"> & {
   question: Omit<

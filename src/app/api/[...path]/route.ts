@@ -15,13 +15,16 @@ import {
 } from "@/server/auth";
 import {
   bankKey,
+  communityKey,
   dashboard,
   emptyBank,
   getBank,
   getUserState,
+  studyBank,
+  type SharedQuestion,
 } from "@/server/service";
-import { mutate } from "@/server/store";
-import { initialUser, type Bank } from "@/domain/types";
+import { mutate, store } from "@/server/store";
+import { initialUser, type Bank, type Revision } from "@/domain/types";
 import {
   activeRelease,
   answer,
@@ -34,8 +37,10 @@ import {
 import {
   bankSchema,
   exportRelease,
+  hash,
   parseImport,
   prepareRelease,
+  questionSchema,
 } from "@/domain/content";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -328,7 +333,159 @@ async function handle(
     if (request.method === "GET" && path === "bootstrap") {
       // Adopt existing local sessions before they sign out or expire.
       if (user.demo) await openDemoSession();
-      return reply(dashboard(user, bank, await getUserState(user)));
+      const state = await getUserState(user);
+      return reply(dashboard(user, studyBank(bank, state), state));
+    }
+    if (request.method === "GET" && path === "personal/questions") {
+      return reply((await getUserState(user)).personalQuestions);
+    }
+    if (request.method === "POST" && path === "personal/questions") {
+      const input = z
+        .object({
+          category_slug: z.string().min(1).max(100),
+          objective_code: z.string().trim().min(1).max(80),
+          prompt: z.string().trim().min(1).max(6000),
+          choices: z
+            .array(
+              z.object({
+                id: z.string().min(1).max(100),
+                text: z.string().trim().min(1).max(2000),
+              }),
+            )
+            .length(4),
+          correct_choice_id: z.string().min(1).max(100),
+          explanation_technical: z.string().trim().min(1).max(6000),
+          explanation_eli5: z.string().trim().min(1).max(3000),
+          difficulty: z.enum(["basic", "intermediate", "advanced"]),
+          tags: z.array(z.string().trim().min(1).max(60)).max(20),
+        })
+        .strict()
+        .parse(data);
+      const active = bank.activeId ? activeRelease(bank) : null;
+      if (!active?.categories.some((item) => item.slug === input.category_slug))
+        throw fail("Choose a category from the published question bank.");
+      const external_id = "personal-" + randomUUID();
+      const question = questionSchema.parse({
+        ...input,
+        external_id,
+        tags: [...new Set(["personal", ...input.tags])],
+        source_reference: "Personal question bank",
+        change_note: "Created in personal question bank.",
+      });
+      const { change_note: _note, ...core } = question;
+      void _note;
+      const revision: Revision = {
+        ...question,
+        revision: 1,
+        fingerprint: hash(core),
+      };
+      await mutate("user:" + user.id, initialUser, (state) => {
+        state.personalQuestions ||= [];
+        if (state.personalQuestions.length >= 1000)
+          throw fail(
+            "A personal question bank can contain up to 1,000 questions.",
+          );
+        state.personalQuestions.push(revision);
+        return null;
+      });
+      return reply(revision, 201);
+    }
+    if (request.method === "GET" && path === "community/questions") {
+      const shared = await store().read<SharedQuestion[]>(communityKey());
+      return reply((shared?.value || []).slice().reverse());
+    }
+    if (
+      request.method === "POST" &&
+      path.startsWith("personal/questions/") &&
+      path.endsWith("/share")
+    ) {
+      const id = path.slice("personal/questions/".length, -"/share".length);
+      const state = await getUserState(user);
+      const question = state.personalQuestions.find(
+        (item) => item.external_id === id,
+      );
+      if (!question) throw fail("Personal question not found.", 404);
+      const shared = await mutate<SharedQuestion[], SharedQuestion>(
+        communityKey(),
+        () => [],
+        (items) => {
+          const existing = items.find(
+            (item) => item.sourceQuestionId === question.external_id,
+          );
+          if (existing) return existing;
+          if (items.length >= 10000)
+            throw fail("Community library is at capacity.", 503);
+          const entry: SharedQuestion = {
+            id: randomUUID(),
+            sourceQuestionId: question.external_id,
+            author: state.profile.name.trim() || "Anonymous learner",
+            sharedAt: new Date().toISOString(),
+            question,
+          };
+          items.push(entry);
+          return entry;
+        },
+      );
+      return reply(shared);
+    }
+    if (
+      request.method === "POST" &&
+      path.startsWith("community/questions/") &&
+      path.endsWith("/copy")
+    ) {
+      const id = path.slice("community/questions/".length, -"/copy".length);
+      const shared = await store().read<SharedQuestion[]>(communityKey());
+      const source = shared?.value.find((item) => item.id === id);
+      if (!source) throw fail("Shared question not found.", 404);
+      const copied: Revision = {
+        ...source.question,
+        external_id: "personal-" + randomUUID(),
+        tags: [
+          ...new Set(["personal", "community-copy", ...source.question.tags]),
+        ],
+        source_reference: "Copied from community question",
+        change_note: "Copied from community library.",
+        revision: 1,
+        fingerprint: "",
+      };
+      const {
+        change_note: _note,
+        revision: _revision,
+        fingerprint: _fingerprint,
+        ...core
+      } = copied;
+      void _note;
+      void _revision;
+      void _fingerprint;
+      copied.fingerprint = hash(core);
+      await mutate("user:" + user.id, initialUser, (state) => {
+        state.personalQuestions ||= [];
+        if (state.personalQuestions.length >= 1000)
+          throw fail(
+            "A personal question bank can contain up to 1,000 questions.",
+          );
+        state.personalQuestions.push(copied);
+        return null;
+      });
+      return reply(copied, 201);
+    }
+    if (
+      request.method === "POST" &&
+      path.startsWith("personal/questions/") &&
+      path.endsWith("/delete")
+    ) {
+      const id = path.slice("personal/questions/".length, -"/delete".length);
+      await mutate("user:" + user.id, initialUser, (state) => {
+        state.personalQuestions ||= [];
+        const before = state.personalQuestions.length;
+        state.personalQuestions = state.personalQuestions.filter(
+          (item) => item.external_id !== id,
+        );
+        if (state.personalQuestions.length === before)
+          throw fail("Personal question not found.", 404);
+        return null;
+      });
+      return reply({ ok: true });
     }
     if (request.method === "POST" && path === "attempts") {
       const input = z
@@ -356,7 +513,9 @@ async function handle(
         .parse(data);
       const result = await mutate("user:" + user.id, initialUser, (state) => {
         expireAttempts(state);
-        return publicAttempt(startAttempt(bank, state, input));
+        return publicAttempt(
+          startAttempt(studyBank(bank, state), state, input),
+        );
       });
       return reply(result);
     }

@@ -19,6 +19,30 @@ export function bankKey(user: Identity) {
 export function emptyBank(): Bank {
   return { activeId: null, releases: [], audit: [] };
 }
+export type SharedQuestion = {
+  id: string;
+  sourceQuestionId: string;
+  author: string;
+  sharedAt: string;
+  question: import("../domain/types").Revision;
+};
+export function communityKey() {
+  return "community:questions";
+}
+export function studyBank(bank: Bank, state: UserState): Bank {
+  if (!bank.activeId || !state.personalQuestions.length) return bank;
+  const active = activeRelease(bank);
+  const release = {
+    ...active,
+    questions: [...active.questions, ...state.personalQuestions],
+  };
+  return {
+    ...bank,
+    releases: bank.releases.map((item) =>
+      item.id === active.id ? release : item,
+    ),
+  };
+}
 export async function getBank(user: Identity): Promise<Bank> {
   const key = bankKey(user),
     record = await store().read<Bank>(key);
@@ -39,6 +63,7 @@ export async function getBank(user: Identity): Promise<Bank> {
 }
 export async function getUserState(user: Identity) {
   return mutate("user:" + user.id, initialUser, (state) => {
+    state.personalQuestions ||= [];
     expireAttempts(state);
     return state;
   });
