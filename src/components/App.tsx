@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { api, date, modeNames, setCsrf, type Dashboard } from "./client";
 import Auth from "./Auth";
 import Practice from "./Practice";
@@ -15,13 +15,24 @@ const nav: { id: View; label: string; number: string }[] = [
   { id: "history", label: "History", number: "04" },
   { id: "bank", label: "Question bank", number: "05" },
 ];
-export default function App({ recovery = false }: { recovery?: boolean }) {
-  const [data, setData] = useState<Dashboard | null>(null),
-    [loading, setLoading] = useState(true),
+export default function App({
+  recovery = false,
+  initialData = null,
+}: {
+  recovery?: boolean;
+  initialData?: Dashboard | null;
+}) {
+  const [data, setData] = useState<Dashboard | null>(initialData),
+    [loading, setLoading] = useState(false),
     [error, setError] = useState(""),
+    [signingOutBusy, setSigningOutBusy] = useState(false),
     [view, setView] = useState<View>("dashboard"),
     [attempt, setAttempt] = useState(""),
     [preset, setPreset] = useState({ mode: "mixed", category: "" });
+  const signingOut = useRef(false);
+  useEffect(() => {
+    setCsrf(data?.user.csrf || "");
+  }, [data?.user.csrf]);
   async function refresh() {
     const result = await api<Dashboard>("bootstrap");
     setCsrf(result.user.csrf);
@@ -38,15 +49,7 @@ export default function App({ recovery = false }: { recovery?: boolean }) {
       window.removeEventListener("reviewer:session-expired", expired);
   }, []);
   useEffect(() => {
-    if (recovery) {
-      setLoading(false);
-      return;
-    }
-    refresh()
-      .catch((e) => {
-        if (e.message !== "Sign in to continue.") setError(e.message);
-      })
-      .finally(() => setLoading(false));
+    if (recovery) return;
     const sync = () => {
       const q = new URLSearchParams(location.search);
       const v = q.get("view");
@@ -99,11 +102,15 @@ export default function App({ recovery = false }: { recovery?: boolean }) {
         )}
         <Auth
           recovery={recovery}
-          onLogin={() => {
+          onLogin={async () => {
             setLoading(true);
-            refresh()
-              .catch((e) => setError(e.message))
-              .finally(() => setLoading(false));
+            try {
+              await refresh();
+            } catch (e) {
+              setError((e as Error).message);
+            } finally {
+              setLoading(false);
+            }
           }}
         />
       </>
@@ -187,17 +194,24 @@ export default function App({ recovery = false }: { recovery?: boolean }) {
               className="text-button"
               aria-label="Sign out"
               onClick={async () => {
+                if (signingOut.current) return;
+                signingOut.current = true;
+                setSigningOutBusy(true);
                 try {
                   await api("auth/logout", {});
                   setCsrf("");
                   setData(null);
                 } catch (e) {
                   setError((e as Error).message);
+                } finally {
+                  signingOut.current = false;
+                  setSigningOutBusy(false);
                 }
               }}
-              title="Sign out"
+              disabled={signingOutBusy}
+              title={signingOutBusy ? "Signing out…" : "Sign out"}
             >
-              ↗
+              {signingOutBusy ? "…" : "↗"}
             </button>
           </div>
         </div>

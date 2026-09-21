@@ -17,7 +17,7 @@ export default function Auth({
   onLogin,
   recovery = false,
 }: {
-  onLogin: () => void;
+  onLogin: () => Promise<void>;
   recovery?: boolean;
 }) {
   const [settings, setSettings] = useState<{
@@ -34,7 +34,8 @@ export default function Auth({
     [message, setMessage] = useState(""),
     [busy, setBusy] = useState(false);
   const target = useRef<HTMLDivElement>(null),
-    widget = useRef<string | null>(null);
+    widget = useRef<string | null>(null),
+    inFlight = useRef(false);
   useEffect(() => {
     api<{ demo: boolean; siteKey: string }>("auth/config")
       .then(setSettings)
@@ -72,6 +73,8 @@ export default function Auth({
     };
   }, [settings, recovery]);
   async function run(fn: () => Promise<void>) {
+    if (inFlight.current) return;
+    inFlight.current = true;
     setBusy(true);
     setError("");
     setMessage("");
@@ -80,6 +83,7 @@ export default function Auth({
     } catch (e) {
       setError((e as Error).message);
     } finally {
+      inFlight.current = false;
       setBusy(false);
       if (widget.current) {
         window.turnstile?.reset(widget.current);
@@ -129,7 +133,7 @@ export default function Auth({
                 onClick={() =>
                   run(async () => {
                     await api("auth/demo", {});
-                    onLogin();
+                    await onLogin();
                   })
                 }
               >
@@ -200,7 +204,7 @@ export default function Auth({
                     setMessage(result.message);
                   } else {
                     await api("auth/login", { email, password, captcha });
-                    onLogin();
+                    await onLogin();
                   }
                 });
               }}
