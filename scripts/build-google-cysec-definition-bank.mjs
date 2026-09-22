@@ -164,7 +164,68 @@ const promptOverrides = {
     "A specialized team that coordinates the response to computer security incidents.",
   "term-0719":
     "The IDS rule field that specifies whether matching traffic should trigger an alert, pass, or be rejected.",
+  "term-0154":
+    "A community-maintained awareness document that highlights the most critical web-application security risks.",
+  "term-0155":
+    "A NIST process that helps organizations manage information-system risk through steps such as categorization, control selection, assessment, authorization, and monitoring.",
+  "term-0497":
+    "A 2014 OpenSSL vulnerability that could expose sensitive data from a server's memory when the affected heartbeat feature was queried.",
+  "term-0525":
+    "A knowledge base that organizes observed adversary tactics and techniques to help defenders understand and detect attacker behavior.",
+  "term-0526":
+    "A web-based directory that organizes open-source intelligence tools by source type and platform.",
+  "term-0527":
+    "A service that lets people check whether an email address or account appears in known data breaches.",
 };
+
+const choiceOverrides = {
+  "term-0154": ["OWASP Top 10", "NIST RMF", "COBIT", "CIS Controls"],
+  "term-0155": ["NIST RMF", "OWASP Top 10", "NIST CSF", "ISO 27001"],
+  "term-0497": [
+    "Heartbleed bug",
+    "Shellshock vulnerability",
+    "SQL injection",
+    "Cross-site scripting",
+  ],
+  "term-0525": [
+    "MITRE ATT&CK",
+    "OSINT Framework",
+    "Have I Been Pwned",
+    "NIST RMF",
+  ],
+  "term-0526": [
+    "OSINT Framework",
+    "MITRE ATT&CK",
+    "Have I Been Pwned",
+    "Shodan",
+  ],
+  "term-0527": [
+    "Have I Been Pwned",
+    "OSINT Framework",
+    "MITRE ATT&CK",
+    "VirusTotal",
+  ],
+};
+
+const excludedSourceQuestions = new Set([
+  "term-0147",
+  "term-0188",
+  "term-0190",
+  "term-0191",
+  "term-0523",
+  "term-0524",
+  "term-0791",
+  "term-0949",
+  "term-0950",
+  "term-0951",
+]);
+
+const removeMarkdownLinks = (value) =>
+  value
+    .replace(/\[([^\]]+)\]\(https?:\/\/[^)]+\)/gi, "$1")
+    .replace(/https?:\/\/\S+/gi, "")
+    .replace(/\s+/g, " ")
+    .trim();
 
 const technicalContext = {
   "general-concepts":
@@ -414,15 +475,26 @@ const conceptContext = (term, definition, category) => {
 const seenDefinitions = new Set();
 let removedLowQualityDefinitions = 0;
 const questions = baseline.questions.flatMap((question) => {
-  const definition =
-    promptOverrides[question.external_id] || definitionFrom(question.prompt);
+  if (excludedSourceQuestions.has(question.external_id)) {
+    removedLowQualityDefinitions++;
+    return [];
+  }
+  const definition = removeMarkdownLinks(
+    promptOverrides[question.external_id] || definitionFrom(question.prompt),
+  );
   if (!definition || seenDefinitions.has(definition.toLowerCase())) return [];
   seenDefinitions.add(definition.toLowerCase());
+  const sourceChoices = choiceOverrides[question.external_id]
+    ? question.choices.map((choice, index) => ({
+        ...choice,
+        text: choiceOverrides[question.external_id][index],
+      }))
+    : question.choices;
   const answer = clean(
-    question.choices.find((choice) => choice.id === question.correct_choice_id)
+    sourceChoices.find((choice) => choice.id === question.correct_choice_id)
       .text,
   );
-  const choices = question.choices.map((choice) => ({
+  const choices = sourceChoices.map((choice) => ({
     ...choice,
     text: clean(choice.text),
   }));
@@ -458,7 +530,7 @@ const release = {
   schema_version: 1,
   exam_code: "COMPTIA-SECURITY-PLUS",
   edition: "SY0-701-v7",
-  release_label: "Google CySec → Security+ V7 definitions.4",
+  release_label: "Google CySec → Security+ V7 definitions.5",
   categories,
   questions,
 };
