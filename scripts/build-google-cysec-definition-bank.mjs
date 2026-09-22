@@ -70,13 +70,101 @@ const plainDefinition = (value) =>
       .trim(),
   );
 
+const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+function concealAnswer(definition, term) {
+  if (term.length < 3) return definition;
+  const expression = new RegExp(escapeRegex(term), "i");
+  const sentences = definition.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [definition];
+  const retained = sentences.filter((item) => !expression.test(item));
+  return clean(retained.join(" "));
+}
+
 function explanationFor(term, definition, context) {
-  const plain = concise(plainDefinition(definition));
+  const nameContext = (text) => {
+    if (/^It\s+is\b/.test(text))
+      return text.replace(/^It\s+is\b/, `${term} is`);
+    if (/^It\s+supports\b/.test(text))
+      return text.replace(/^It\s+supports\b/, `${term} supports`);
+    if (/^It\s+matters\b/.test(text))
+      return text.replace(/^It\s+matters\b/, `${term} matters`);
+    if (/^It\s+concerns\b/.test(text))
+      return text.replace(/^It\s+concerns\b/, `${term} concerns`);
+    if (/^It\s+describes\b/.test(text))
+      return text.replace(/^It\s+describes\b/, `${term} describes`);
+    if (/^It\s+creates\b/.test(text))
+      return text.replace(/^It\s+creates\b/, `${term} creates`);
+    if (/^It\s+helps\b/.test(text))
+      return text.replace(/^It\s+helps\b/, `${term} helps`);
+    return text.startsWith(term) ? text : `${term}: ${text}`;
+  };
   return {
-    technical: `${term} fits this definition: ${sentence(definition)} ${context.technical}`,
-    eli5: `${term} is the simple name for this idea: ${plain} ` + context.eli5,
+    technical: nameContext(context.technical),
+    eli5: nameContext(context.eli5),
   };
 }
+
+const promptOverrides = {
+  "term-0011":
+    "Considering several viewpoints and treating colleagues respectfully to find stronger solutions to a security problem.",
+  "term-0072":
+    "Malware that attaches to a host file or program and replicates when the host runs.",
+  "term-0080":
+    "People or groups that deliberately carry out harmful activity against systems, data, or organizations.",
+  "term-0161":
+    "The NIST RMF step where an organization puts approved security and privacy plans into operation.",
+  "term-0169":
+    "The process of verifying that a user, device, or service is the identity it claims to be.",
+  "term-0177":
+    "The NIST Cybersecurity Framework function that identifies possible security events and improves monitoring.",
+  "term-0179":
+    "The NIST Cybersecurity Framework function that restores systems and services after a security incident.",
+  "term-0223":
+    "Visual maps that show network devices, connections, and the architecture between them.",
+  "term-0226":
+    "Facilities away from the user’s premises where cloud providers host computing resources and data.",
+  "term-0282":
+    "A Wi-Fi security standard that uses AES-based encryption and CCMP to protect wireless traffic.",
+  "term-0283":
+    "A newer Wi-Fi security standard that strengthens wireless authentication with SAE and improves encryption protections.",
+  "term-0298":
+    "Standards such as WEP, WPA, WPA2, and WPA3 that define how Wi-Fi networks authenticate users and protect traffic.",
+  "term-0302":
+    "The rules a VPN uses to authenticate peers, exchange keys, and protect traffic in its tunnel.",
+  "term-0306":
+    "A subnet placed between an internal network and an untrusted network to limit direct exposure of internal systems.",
+  "term-0331":
+    "A packet-capture field that records the date and time an event or packet was observed.",
+  "term-0332": "The IP address that identifies where a packet originated.",
+  "term-0334":
+    "The IP address that identifies the intended recipient of a packet.",
+  "term-0364":
+    "Software or firmware that abstracts physical hardware so multiple virtual machines can run on one host.",
+  "term-0385":
+    "A Linux kernel feature that provides hypervisor capabilities for creating and running virtual machines.",
+  "term-0418":
+    "A reusable unit of software that can be installed or combined with other units to build an application.",
+  "term-0432":
+    "The user, group, and other categories that Linux uses when applying file permissions.",
+  "term-0467":
+    "Characters placed around text, dates, or times so a query treats the value as a literal string.",
+  "term-0593":
+    "A threat-modeling process that analyzes an application through stages such as defining objectives, identifying threats, and assessing impact.",
+  "term-0594":
+    "A payment-card industry security standard that requires organizations handling cardholder data to maintain specified safeguards.",
+  "term-0686":
+    "The documented record showing who handled digital evidence, when they handled it, and how it was protected.",
+  "term-0692":
+    "The incident-response phase that removes the attacker’s presence, malicious code, and the weaknesses used in the incident.",
+  "term-0693":
+    "The incident-response phase that safely restores affected systems and validates normal operations.",
+  "term-0742":
+    "The query language used in Splunk to search, filter, transform, and analyze event data.",
+  "term-0751":
+    "A specialized team that coordinates the response to computer security incidents.",
+  "term-0719":
+    "The IDS rule field that specifies whether matching traffic should trigger an alert, pass, or be rejected.",
+};
 
 const technicalContext = {
   "general-concepts":
@@ -103,6 +191,12 @@ const plainContext = {
 
 const categoryFor = (term, definition, fallback) => {
   const text = (term + " " + definition).toLowerCase();
+  if (
+    /incident response|containment|eradication|forensic|evidence preservation|remediation|recovery phase|csirt/.test(
+      text,
+    )
+  )
+    return "operations";
   if (
     /intrusion detection|security information and event management|\bsiem\b|splunk|chronicle/.test(
       text,
@@ -152,6 +246,12 @@ const objectiveFor = {
 
 const conceptContext = (term, definition, category) => {
   const text = (term + " " + definition).toLowerCase();
+  if (/incident response/.test(text))
+    return {
+      technical:
+        "Incident response is the organized process for preparing for, detecting, containing, investigating, eradicating, and recovering from a security event. Following an established process preserves evidence and keeps the response coordinated.",
+      eli5: "It is the team’s organized plan for handling a security emergency from the first alert through recovery.",
+    };
   if (
     /\b(ids|intrusion detection|snort|suricata)\b/.test(text) ||
     /signature.*\b(alert|pass|reject)\b/.test(text)
@@ -312,10 +412,12 @@ const conceptContext = (term, definition, category) => {
 };
 
 const seenDefinitions = new Set();
+let removedLowQualityDefinitions = 0;
 const questions = baseline.questions.flatMap((question) => {
-  const prompt = definitionFrom(question.prompt);
-  if (!prompt || seenDefinitions.has(prompt.toLowerCase())) return [];
-  seenDefinitions.add(prompt.toLowerCase());
+  const definition =
+    promptOverrides[question.external_id] || definitionFrom(question.prompt);
+  if (!definition || seenDefinitions.has(definition.toLowerCase())) return [];
+  seenDefinitions.add(definition.toLowerCase());
   const answer = clean(
     question.choices.find((choice) => choice.id === question.correct_choice_id)
       .text,
@@ -324,9 +426,16 @@ const questions = baseline.questions.flatMap((question) => {
     ...choice,
     text: clean(choice.text),
   }));
-  const category = categoryFor(answer, prompt, question.category_slug);
-  const context = conceptContext(answer, prompt, category);
-  const explanation = explanationFor(answer, prompt, context);
+  const prompt = concealAnswer(definition, answer);
+  if (!prompt || prompt.length < 24) {
+    removedLowQualityDefinitions++;
+    return [];
+  }
+  if (new RegExp(escapeRegex(answer), "i").test(prompt))
+    throw new Error(`Definition prompt leaks its answer: ${answer}`);
+  const category = categoryFor(answer, definition, question.category_slug);
+  const context = conceptContext(answer, definition, category);
+  const explanation = explanationFor(answer, definition, context);
   return [
     {
       ...question,
@@ -349,7 +458,7 @@ const release = {
   schema_version: 1,
   exam_code: "COMPTIA-SECURITY-PLUS",
   edition: "SY0-701-v7",
-  release_label: "Google CySec → Security+ V7 definitions.3",
+  release_label: "Google CySec → Security+ V7 definitions.4",
   categories,
   questions,
 };
@@ -376,5 +485,6 @@ console.log(
     source_questions: baseline.questions.length,
     published_definition_questions: questions.length,
     removed_duplicate_definitions: baseline.questions.length - questions.length,
+    removed_low_quality_definitions: removedLowQualityDefinitions,
   }),
 );
