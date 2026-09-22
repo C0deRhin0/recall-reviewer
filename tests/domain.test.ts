@@ -8,6 +8,7 @@ import {
 import {
   activeRelease,
   answer,
+  expireAttempts,
   availablePoolCounts,
   finishAttempt,
   publicAttempt,
@@ -236,6 +237,30 @@ describe("practice integrity", () => {
     const { state, attempt } = setup("automatic");
     answer(state, attempt.id, 0, attempt.items[0].choices[0].id, false);
     expect(publicAttempt(attempt).items[0].solution).not.toBeNull();
+  });
+  it("withholds feedback and advances when a per-question timer expires", () => {
+    const { bank, state } = setup();
+    const attempt = startAttempt(
+      bank,
+      state,
+      {
+        mode: "mixed",
+        category: "",
+        count: 2,
+        disclosure: "automatic",
+        minutes: 30,
+        timing: "per-question",
+        perQuestionSeconds: 10,
+        preferUnseen: false,
+        requestId: crypto.randomUUID(),
+      },
+      new Date("2026-09-09T00:00:00Z"),
+    );
+    expect(attempt.disclosure).toBe("after-session");
+    expect(attempt.questionDeadline).toBe("2026-09-09T00:00:10.000Z");
+    expireAttempts(state, new Date("2026-09-09T00:00:11Z"));
+    expect(attempt.cursor).toBe(1);
+    expect(attempt.items[0].selectedId).toBeNull();
   });
   it("withholds all feedback in a mock even if a reveal flag is tampered", () => {
     const { state, attempt } = setup("automatic", "mock");

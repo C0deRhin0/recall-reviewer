@@ -5,6 +5,7 @@ import type {
   Disclosure,
   Mode,
   PublicAttempt,
+  Timing,
 } from "@/domain/types";
 import { poolCountKey } from "@/domain/types";
 import { api, modeNames, type Dashboard } from "./client";
@@ -40,6 +41,10 @@ export default function Practice({
       dashboard.profile.disclosure,
     ),
     [minutes, setMinutes] = useState(30),
+    [timing, setTiming] = useState<Timing>(
+      preset.mode === "mock" ? "overall" : "none",
+    ),
+    [perQuestionSeconds, setPerQuestionSeconds] = useState(60),
     [unseen, setUnseen] = useState(false),
     [remaining, setRemaining] = useState(""),
     [confirmFinish, setConfirmFinish] = useState(false),
@@ -61,6 +66,7 @@ export default function Practice({
   useEffect(() => {
     setMode(preset.mode as Mode);
     setCategory(preset.category);
+    setTiming(preset.mode === "mock" ? "overall" : "none");
   }, [preset.mode, preset.category]);
   const pool =
     dashboard.poolCounts[poolCountKey(mode, category, contentStyle)] || 0;
@@ -119,11 +125,12 @@ export default function Practice({
     item?.guessed,
   ]);
   useEffect(() => {
-    if (!attempt?.deadline || attempt.completedAt) return;
+    const deadline = attempt?.deadline || attempt?.questionDeadline;
+    if (!deadline || attempt.completedAt) return;
     const tick = () => {
       const seconds = Math.max(
         0,
-        Math.ceil((Date.parse(attempt.deadline!) - Date.now()) / 1000),
+        Math.ceil((Date.parse(deadline) - Date.now()) / 1000),
       );
       setRemaining(
         `${Math.floor(seconds / 60)
@@ -132,9 +139,13 @@ export default function Practice({
       );
       if (seconds === 0 && !finishing.current) {
         finishing.current = true;
-        api<PublicAttempt>(`attempts/${attempt.id}/finish`, {})
+        api<PublicAttempt>(
+          `attempts/${attempt.id}/${attempt.timing === "per-question" ? "timer" : "finish"}`,
+          {},
+        )
           .then((a) => {
             setAttempt(a);
+            setIndex(a.completedAt ? 0 : a.cursor);
             return refresh();
           })
           .catch((e) => {
@@ -146,7 +157,13 @@ export default function Practice({
     tick();
     const timer = setInterval(tick, 1000);
     return () => clearInterval(timer);
-  }, [attempt?.id, attempt?.deadline, attempt?.completedAt]);
+  }, [
+    attempt?.id,
+    attempt?.deadline,
+    attempt?.questionDeadline,
+    attempt?.completedAt,
+    attempt?.timing,
+  ]);
   useEffect(() => {
     function key(e: KeyboardEvent) {
       if (
@@ -237,6 +254,8 @@ export default function Practice({
                   count: Number(count),
                   disclosure,
                   minutes,
+                  timing: mode === "mock" ? "overall" : timing,
+                  perQuestionSeconds,
                   preferUnseen: unseen,
                   requestId: requestId.current,
                 });
@@ -269,6 +288,7 @@ export default function Practice({
                     aria-pressed={mode === m}
                     onClick={() => {
                       setMode(m);
+                      setTiming(m === "mock" ? "overall" : "none");
                       setError("");
                       if (m !== "category") setCategory("");
                       if (m === "category" && !category)
@@ -336,15 +356,41 @@ export default function Practice({
                     {`${pool} available in this set`}
                   </span>
                 </label>
-                {mode === "mock" && (
+                <label>
+                  Timed test
+                  <select
+                    value={mode === "mock" ? "overall" : timing}
+                    disabled={mode === "mock"}
+                    onChange={(e) => setTiming(e.target.value as Timing)}
+                  >
+                    <option value="none">No timer</option>
+                    <option value="per-question">Time per question</option>
+                    <option value="overall">Overall test time</option>
+                  </select>
+                </label>
+                {(timing === "overall" || mode === "mock") && (
                   <label>
-                    Time limit, minutes
+                    Overall time, minutes
                     <input
                       type="number"
                       min={1}
                       max={180}
                       value={minutes}
                       onChange={(e) => setMinutes(Number(e.target.value))}
+                    />
+                  </label>
+                )}
+                {timing === "per-question" && mode !== "mock" && (
+                  <label>
+                    Time per question, seconds
+                    <input
+                      type="number"
+                      min={10}
+                      max={600}
+                      value={perQuestionSeconds}
+                      onChange={(e) =>
+                        setPerQuestionSeconds(Number(e.target.value))
+                      }
                     />
                   </label>
                 )}
@@ -365,8 +411,12 @@ export default function Practice({
               <label>
                 Answer feedback
                 <select
-                  value={mode === "mock" ? "after-session" : disclosure}
-                  disabled={mode === "mock"}
+                  value={
+                    mode === "mock" || timing !== "none"
+                      ? "after-session"
+                      : disclosure
+                  }
+                  disabled={mode === "mock" || timing !== "none"}
                   onChange={(e) => setDisclosure(e.target.value as Disclosure)}
                 >
                   <option value="on-demand">On demand</option>
@@ -375,8 +425,8 @@ export default function Practice({
                 </select>
               </label>
               <p className="fine-print">
-                {mode === "mock"
-                  ? "Mock answers lock when the session ends."
+                {mode === "mock" || timing !== "none"
+                  ? "Timed sessions show answers and reasoning only in the final review."
                   : "Answers lock when submitted."}
               </p>
             </div>
@@ -440,7 +490,7 @@ export default function Practice({
           <span>{attempt.releaseLabel}</span>
         </span>
         <div className="session-header-actions">
-          {attempt.deadline && !result && (
+          {(attempt.deadline || attempt.questionDeadline) && !result && (
             <span className="session-clock" aria-label="Time remaining">
               <StudyIcon name="time" />
               {remaining}
@@ -697,7 +747,9 @@ export default function Practice({
                 className="step-button"
                 aria-label="Previous question"
                 title="Previous question"
-                disabled={index === 0 || blocked}
+                disabled={
+                  index === 0 || blocked || attempt.timing === "per-question"
+                }
                 onClick={() => navigate(index - 1)}
               >
                 <StudyIcon name="back" />
@@ -707,7 +759,11 @@ export default function Practice({
                 className="step-button"
                 aria-label="Next question"
                 title="Next question"
-                disabled={index === total - 1 || blocked}
+                disabled={
+                  index === total - 1 ||
+                  blocked ||
+                  attempt.timing === "per-question"
+                }
                 onClick={() => navigate(index + 1)}
               >
                 <span>Next</span>
@@ -885,6 +941,8 @@ export default function Practice({
                       { index, choice: selected, guessed },
                     );
                     setAttempt(a);
+                    if (a.timing === "per-question" && !a.completedAt)
+                      setIndex(a.cursor);
                     setMessage(a.completedAt ? "Time is up." : "");
                   })
                 }

@@ -39,6 +39,7 @@ export type Bank = {
   audit: Audit[];
 };
 export type Disclosure = "automatic" | "on-demand" | "after-session";
+export type Timing = "none" | "per-question" | "overall";
 export type ContentStyle = "scenario" | "definition" | "mixed";
 export type Mode =
   "mixed" | "category" | "mistakes" | "bookmarks" | "due" | "mock" | "weighted";
@@ -68,8 +69,11 @@ export type Attempt = {
   mode: Mode;
   contentStyle: ContentStyle;
   disclosure: Disclosure;
+  timing: Timing;
+  perQuestionSeconds: number | null;
   startedAt: string;
   deadline: string | null;
+  questionDeadline: string | null;
   completedAt: string | null;
   items: Item[];
   notice: string;

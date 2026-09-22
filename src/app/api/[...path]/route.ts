@@ -539,6 +539,8 @@ async function handle(
           count: z.number().int().min(1).max(100),
           disclosure: z.enum(["automatic", "on-demand", "after-session"]),
           minutes: z.number().int().min(1).max(180),
+          timing: z.enum(["none", "per-question", "overall"]).default("none"),
+          perQuestionSeconds: z.number().int().min(10).max(600).default(60),
           preferUnseen: z.boolean(),
           requestId: uuid,
         })
@@ -556,10 +558,13 @@ async function handle(
       const [, id, action] = path.split("/");
       uuid.parse(id);
       if (request.method === "GET" && !action) {
-        const state = await getUserState(user);
-        const a = state.attempts.find((a) => a.id === id);
-        if (!a) throw fail("Session not found.", 404);
-        return reply(publicAttempt(a));
+        const a = await mutate("user:" + user.id, initialUser, (state) => {
+          expireAttempts(state);
+          const attempt = state.attempts.find((a) => a.id === id);
+          if (!attempt) throw fail("Session not found.", 404);
+          return publicAttempt(attempt);
+        });
+        return reply(a);
       }
       if (request.method === "POST") {
         const result = await mutate("user:" + user.id, initialUser, (state) => {
@@ -576,6 +581,10 @@ async function handle(
               .strict()
               .parse(data);
             answer(state, id, x.index, x.choice, x.guessed);
+          } else if (action === "timer") {
+            if (a.timing === "none")
+              throw fail("This session has no timer.", 400);
+            expireAttempts(state);
           } else if (action === "finish") finishAttempt(state, a);
           else if (action === "reveal") {
             const x = z

@@ -5,6 +5,7 @@ import type {
   Mode,
   ContentStyle,
   Disclosure,
+  Timing,
   PublicAttempt,
   Release,
   UserState,
@@ -154,6 +155,8 @@ export function startAttempt(
     count: number;
     disclosure: Disclosure;
     minutes: number;
+    timing?: Timing;
+    perQuestionSeconds?: number;
     preferUnseen: boolean;
     requestId: string;
   },
@@ -226,6 +229,9 @@ export function startAttempt(
     if (unseen < config.count)
       notice = `${unseen} unseen questions available; this set includes ${config.count - unseen} previously seen questions.`;
   }
+  const timing = config.mode === "mock" ? "overall" : config.timing || "none";
+  const perQuestionSeconds =
+    timing === "per-question" ? config.perQuestionSeconds || 60 : null;
   const attempt: Attempt = {
     id: config.requestId || randomUUID(),
     releaseId: release.id,
@@ -234,11 +240,17 @@ export function startAttempt(
     examCode: release.examCode,
     mode: config.mode,
     contentStyle: config.contentStyle || "mixed",
-    disclosure: config.mode === "mock" ? "after-session" : config.disclosure,
+    disclosure: timing !== "none" ? "after-session" : config.disclosure,
+    timing,
+    perQuestionSeconds,
     startedAt: now.toISOString(),
     deadline:
-      config.mode === "mock"
+      timing === "overall"
         ? new Date(+now + config.minutes * 60000).toISOString()
+        : null,
+    questionDeadline:
+      timing === "per-question"
+        ? new Date(+now + perQuestionSeconds! * 1000).toISOString()
         : null,
     completedAt: null,
     cursor: 0,
@@ -301,6 +313,36 @@ export function expireAttempts(state: UserState, now = new Date()) {
   for (const a of state.attempts)
     if (!a.completedAt && a.deadline && new Date(a.deadline) <= now)
       finishAttempt(state, a, now);
+    else if (
+      !a.completedAt &&
+      a.timing === "per-question" &&
+      a.questionDeadline &&
+      new Date(a.questionDeadline) <= now
+    ) {
+      if (a.cursor >= a.items.length - 1) finishAttempt(state, a, now);
+      else {
+        a.cursor++;
+        a.questionDeadline = new Date(
+          +now + (a.perQuestionSeconds || 60) * 1000,
+        ).toISOString();
+      }
+    }
+}
+export function navigateAttempt(
+  state: UserState,
+  id: string,
+  index: number,
+  now = new Date(),
+) {
+  const a = state.attempts.find((attempt) => attempt.id === id);
+  if (!a) throw publicError("Session not found.");
+  if (a.completedAt) return a;
+  if (!a.items[index]) throw publicError("Question not found.");
+  if (a.timing === "per-question" && index !== a.cursor)
+    throw publicError(
+      "Timed questions must be answered or allowed to expire in order.",
+    );
+  return a;
 }
 export function answer(
   state: UserState,
@@ -331,6 +373,12 @@ export function answer(
   if (a.disclosure === "automatic") item.revealed = true;
   if (a.mode !== "mock") credit(state, item, a);
   a.cursor = index;
+  if (a.timing === "per-question" && index < a.items.length - 1) {
+    a.cursor = index + 1;
+    a.questionDeadline = new Date(
+      +now + (a.perQuestionSeconds || 60) * 1000,
+    ).toISOString();
+  }
   return a;
 }
 export function publicAttempt(a: Attempt): PublicAttempt {
